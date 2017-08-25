@@ -1,0 +1,137 @@
+/* Base Styles */
+body {
+  font-family: sans-serif;
+  line-height: 1.5;
+}
+
+.main {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.tabs-tab-list {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-bottom: -2px;
+}
+
+.tabs-tab-list li {
+  margin: 0;
+}
+
+.tabs-trigger {
+  border-bottom: none;
+  color: #666;
+  display: none;
+  font-weight: normal;
+  margin: 0 5px 0 1px;
+  padding: 15px 20px;
+  text-decoration: none;
+}
+
+.tabs-trigger:hover {
+  border-bottom: none;
+  color: #000;
+}
+
+.tabs-trigger.is-selected, .tabs-trigger.is-selected:hover, .tabs-trigger.is-selected:focus {
+  border-bottom: 2px solid #000;
+  color: #000;
+}
+
+.tabs-panel {
+  border: 1px solid #eee;
+  border-top: 2px solid #eee;
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.tabs-panel:not(:last-child) {
+  border-bottom: none;
+}
+
+.tabs-panel .content {
+  margin-top: 10px;
+  padding: 20px;
+}
+
+.tabs-panel.is-hidden .content {
+  display: none;
+}
+
+.tabs-panel:active, .tabs-panel:focus {
+  outline: none;
+}
+
+.is-initialized.tabs-allowed .tabs-panel {
+  display: inherit;
+}
+
+.accordeon-trigger {
+  display: block;
+  cursor: pointer;
+  padding: 15px 20px;
+}
+
+.accordeon-trigger-icon {
+  pointer-events: none;
+}
+
+@media (min-width: 40em) {
+  .tabs-allowed .accordeon-trigger {
+    display: none;
+  }
+  .tabs-allowed .tabs-trigger {
+    display: block;
+  }
+  .tabs-allowed .tabs-panel {
+    display: none;
+  }
+  .tabs-allowed .tabs-panel.is-hidden {
+    display: none;
+  }
+}
+
+.accordeon-trigger-icon {
+  display: inline-block;
+  float: right;
+  width: 24px;
+  height: 24px;
+}
+
+.accordeon-trigger-icon svg {
+  margin: 0;
+  transition: transform .06s ease-out;
+}
+
+.is-open .accordeon-trigger-icon svg {
+  transform: rotate(180deg);
+}
+
+.label--open, .label--close {
+  display: block;
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.label--close {
+  display: none;
+}
+
+.is-open .label--open {
+  display: none;
+}
+
+.is-open .label--close {
+  display: block;
+}

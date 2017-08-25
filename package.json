@@ -1,0 +1,37 @@
+{
+  "name": "a11y-accordion-tabs",
+  "version": "0.1.0",
+  "description": "A script for an accessible accordion tabs component",
+  "main": "a11y-accordion-tabs",
+  "keywords": [
+    "accordion",
+    "tabs",
+    "component",
+    "accessibility",
+    "a11y"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matthiasott/a11y-accordion-tabs.git"
+  },
+  "author": "Matthias Ott <mail@matthiasott.com> (https://matthiasott.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/matthiasott/a11y-accordion-tabs/issues"
+  },
+  "homepage": "https://github.com/matthiasott/a11y-accordion-tabs#readme",
+  "scripts": {
+    "copy": "cp a11y-accordion-tabs.js docs/main.js",
+    "minify": "uglifyjs a11y-accordion-tabs.js -o a11y-accordion-tabs.min.js -c -m",
+    "sass": "node-sass --output-style expanded docs/styles.scss docs/styles.css",
+    "watch:sass": "node-sass --watch docs/styles.scss --output-style expanded docs/styles.css",
+    "build": "npm run minify && npm run sass && npm run copy",
+    "predeploy": "npm run build",
+    "lint": "semistandard a11y-accordion-tabs.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "node-sass": "^4.5.3",
+    "uglify-js": "^3.0.28"
+  }
+}
