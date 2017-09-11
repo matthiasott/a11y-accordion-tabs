@@ -1,4 +1,9 @@
-/* Accessible AccordionTabs, based on the work of @stowball*/
+/*
+*  Accessible AccordionTabs, by Matthias Ott (@m_ott)
+*
+*  Based on the work of @stowball (https://codepen.io/stowball/pen/xVWwWe)
+*
+*/
 (function () {
 
   'use strict';
@@ -21,7 +26,7 @@
 
     if(el.getAttribute('data-tabs') == "true"){
       this.options.tabsAllowed = true;
-    } else if (el.getAttribute('data-tabs') == "false") { 
+    } else if (el.getAttribute('data-tabs') == "false") {
       this.options.tabsAllowed = false;
     }
 
@@ -49,7 +54,11 @@
       enter: 13
     };
 
-    this.isAccordeon = false;
+    if(window.innerWidth > 640 && this.options.tabsAllowed) {
+        this.isAccordeon = false;
+    } else {
+        this.isAccordeon = true;
+    }
 
     for (var i = 0; i < this.tabTriggersLength; i++) {
       this.tabTriggers[i].index = i;
@@ -59,6 +68,8 @@
       if (this.tabTriggers[i].classList.contains('is-selected')) {
         this.selectedTab = i;
       }
+
+      this._hide(i);
     }
 
     for (var i = 0; i < this.accordeonTriggersLength; i++) {
@@ -79,7 +90,8 @@
     if (this.options.tabsAllowed) {
       this.el.classList.add('tabs-allowed');
     }
-    this.selectTab(this.selectedTab);
+
+    this.selectTab(this.selectedTab, false);
 
     var resizeTabs = this._debounce(function() {
       // This gets delayed for performance reasons
@@ -94,11 +106,11 @@
         _this.el.classList.remove('tabs-allowed');
         _this.selectTab(_this.selectedTab);
       }
-      
+
     }, 50);
 
     window.addEventListener('resize', resizeTabs);
-    
+
   };
 
   AccordionTabs.prototype._clickEvent = function (e) {
@@ -158,10 +170,16 @@
     this.tabTriggers[index].setAttribute('aria-selected', true);
     this.tabTriggers[index].setAttribute('tabindex', 0);
 
+    this.accordeonTriggers[index].setAttribute('aria-expanded', true);
+
+    var panelContent = this.tabPanels[index].getElementsByClassName("content")[0];
+    panelContent.setAttribute('aria-hidden', false);
+    panelContent.classList.remove('is-hidden');
+    panelContent.classList.add('is-open');
+
+    this.tabPanels[index].setAttribute('tabindex', 0);
     this.tabPanels[index].classList.remove('is-hidden');
     this.tabPanels[index].classList.add('is-open');
-    this.tabPanels[index].setAttribute('aria-hidden', false);
-    this.tabPanels[index].setAttribute('tabindex', 0);
 
     if (userInvoked) {
       this.tabTriggers[index].focus();
@@ -174,15 +192,17 @@
     this.tabTriggers[index].setAttribute('aria-selected', false);
     this.tabTriggers[index].setAttribute('tabindex', -1);
 
+    this.accordeonTriggers[index].setAttribute('aria-expanded', false);
+
+    var panelContent = this.tabPanels[index].getElementsByClassName("content")[0];
+    panelContent.setAttribute('aria-hidden', true);
+    panelContent.classList.remove('is-open');
+    panelContent.classList.add('is-hidden');
+
     this.tabPanels[index].classList.remove('is-open');
     this.tabPanels[index].classList.add('is-hidden');
-    this.tabPanels[index].setAttribute('aria-hidden', true);
     this.tabPanels[index].setAttribute('tabindex', -1);
   };
-
-  AccordionTabs.prototype.toggleTab = function(el, userInvoked) {
-    this._show(this.selectedTab, userInvoked);
-  }
 
   AccordionTabs.prototype.selectTab = function (index, userInvoked) {
 
