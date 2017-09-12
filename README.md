@@ -1,4 +1,7 @@
 # a11y-accordion-tabs
+
+[![Build Status](https://travis-ci.org/matthiasott/a11y-accordion-tabs.svg?branch=master)](https://travis-ci.org/matthiasott/a11y-accordion-tabs)
+
 A small script (less than 1.6 KB compressed and gzipped) for creating accessible accordion tabs components.
 Based on the [accessible tabs component by @stowball](https://codepen.io/stowball/pen/xVWwWe).
 
