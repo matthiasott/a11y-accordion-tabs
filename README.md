@@ -1,6 +1,6 @@
 # a11y-accordion-tabs
 
-[![npm version](https://badge.fury.io/js/a11y-accordion-tabs.svg)](https://badge.fury.io/js/a11y-accordion-tabs) [![Build Status](https://travis-ci.org/matthiasott/a11y-accordion-tabs.svg?branch=master)](https://travis-ci.org/matthiasott/a11y-accordion-tabs)
+[![npm version](https://badge.fury.io/js/a11y-accordion-tabs.svg)](https://badge.fury.io/js/a11y-accordion-tabs) [![Build Status](https://travis-ci.org/matthiasott/a11y-accordion-tabs.svg?branch=master)](https://travis-ci.org/matthiasott/a11y-accordion-tabs) [![devDependency Status](https://david-dm.org/matthiasott/a11y-accordion-tabs.svg)](https://david-dm.org/matthiasott/a11y-accordion-tabs#info=devDependencies)
 
 A small script (less than 1.6 KB compressed and gzipped) for creating accessible accordion tabs components.
 Based on the [accessible tabs component by @stowball](https://codepen.io/stowball/pen/xVWwWe).
