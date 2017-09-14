@@ -54,7 +54,7 @@
       enter: 13
     };
 
-    if(window.innerWidth > 640 && this.options.tabsAllowed) {
+    if(window.innerWidth >= this.options.breakpoint && this.options.tabsAllowed) {
         this.isAccordeon = false;
     } else {
         this.isAccordeon = true;
@@ -95,7 +95,7 @@
 
     var resizeTabs = this._debounce(function() {
       // This gets delayed for performance reasons
-      if(window.innerWidth > 640 && _this.options.tabsAllowed) {
+      if(window.innerWidth >= _this.options.breakpoint && _this.options.tabsAllowed) {
         _this.isAccordeon = false;
         if (_this.options.tabsAllowed) {
           _this.el.classList.add('tabs-allowed');
@@ -166,9 +166,11 @@
 
   AccordionTabs.prototype._show = function (index, userInvoked) {
 
+    this.tabPanels[index].removeAttribute('tabindex');
+
+    this.tabTriggers[index].removeAttribute('tabindex');
     this.tabTriggers[index].classList.add('is-selected');
     this.tabTriggers[index].setAttribute('aria-selected', true);
-    this.tabTriggers[index].setAttribute('tabindex', 0);
 
     this.accordeonTriggers[index].setAttribute('aria-expanded', true);
 
@@ -177,7 +179,6 @@
     panelContent.classList.remove('is-hidden');
     panelContent.classList.add('is-open');
 
-    this.tabPanels[index].setAttribute('tabindex', 0);
     this.tabPanels[index].classList.remove('is-hidden');
     this.tabPanels[index].classList.add('is-open');
 
