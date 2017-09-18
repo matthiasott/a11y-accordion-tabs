@@ -19,6 +19,12 @@ npm install a11y-accordion-tabs --save-dev
 
 ## Changelog
 
+### 0.2.1
+Breakpoint min-width fix.
+
+### 0.2.0
+Improved ARIA-roles for the accordion state.
+
 ### 0.1.0
 First basic version. Still a lot of cleanup to do. Please use with caution!
 
