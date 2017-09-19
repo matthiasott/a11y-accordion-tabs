@@ -23,35 +23,7 @@
 
   </header>
   <main class="main">
-    <section class="accordion-tabs js-tabs" data-tabs="true" data-breakpoint="400">
-      <ul role="tablist" class="tabs-tab-list">
-          <li role="presentation"><a href="#section1" role="tab" aria-controls="section1" class="tabs-trigger js-tabs-trigger">Section 1</a></li>
-          <li role="presentation"><a href="#section2" role="tab" aria-controls="section2" class="tabs-trigger js-tabs-trigger">Section 2</a></li>
-          <li role="presentation"><a href="#section3" role="tab" aria-controls="section3" class="tabs-trigger js-tabs-trigger">Section 3</a></li>
-      </ul>
-      <section id="section1" role="tabpanel" class="tabs-panel js-tabs-panel" tabindex="0">
-        <div class="accordeon-trigger js-accordeon-trigger" aria-controls="section1" aria-expanded="true" tabindex="0">Section 1 <div class="accordeon-trigger-icon"><span class="label--open">Open</span><span class="label--close">Close</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div></div>
-        <div class="content" aria-hidden="false">
-          <h2>Headline Section 1</h2>
-          <p>Cum prefrontal cortex horribilem walking fornix dead resurgere brains de crazed limbic cortex optic nerve sepulcris creaturis, braaaaaiins zombie sicut hypothalamus de grave hippocampus feeding iride brainz et serpens. Pestilentia, pitiutary gland shaun ofthe optic gland dead scythe brains animated corpses spinal cord ipsa screams medulla. Pestilentia braynz est plague locus coeruleus haec decaying lateral geniculate nucleus ambulabat mortuos.</p>
-        </div>
-      </section>
-      <section id="section2" role="tabpanel" class="tabs-panel js-tabs-panel">
-        <div class="accordeon-trigger js-accordeon-trigger" aria-controls="section2" aria-expanded="false" tabindex="0">Section 2 <div class="accordeon-trigger-icon"><span class="label--open">Open</span><span class="label--close">Close</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div></div>
-        <div class="content" aria-hidden="true">
-          <h2>Headline Section 2</h2>
-          <p>Zombie ipsum brains reversus ab cerebellum viral inferno, brein nam rick mend grimes malum cerveau cerebro. De carne cerebro lumbering animata cervello corpora quaeritis. Summus thalamus brains sit​​, morbo basal ganglia vel maleficia? De braaaiiiins apocalypsi gorger omero prefrontal cortex undead survivor fornix dictum mauris. Hi brains mindless mortuis limbic cortex soulless creaturas optic nerve, imo evil braaiinns stalking monstra hypothalamus adventus resi hippocampus dentevil.</p>
-        </div>
-      </section>
-      <section id="section3" role="tabpanel" class="tabs-panel js-tabs-panel">
-        <div class="accordeon-trigger js-accordeon-trigger" aria-controls="section3" aria-expanded="false" tabindex="0">Section 3 <div class="accordeon-trigger-icon"><span class="label--open">Open</span><span class="label--close">Close</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div></div>
-        <div class="content" aria-hidden="true">
-          <h2>Headline Section 3</h2>
-          <p>Zombie ipsum reversus ab viral inferno, nam rick grimes malum cerebro. De carne lumbering animata corpora quaeritis. Summus brains sit​​, morbo vel maleficia? De apocalypsi gorger omero undead survivor dictum mauris. Hi mindless mortuis soulless creaturas, imo evil stalking monstra adventus resi dentevil vultus comedat cerebella viventium. Qui animated corpse, cricket bat max brucks terribilem incessu zomby. The voodoo sacerdos flesh eater, suscitat mortuos comedere carnem virus. </p>
-        </div>
-      </section>
-    </section>
-    <section id="myTabs" class="accordion-tabs" data-tabs="true">
+    <section class="accordion-tabs js-tabs" data-tabsAllowed="true" data-breakpoint="400" >
       <ul role="tablist" class="tabs-tab-list">
           <li role="presentation"><a href="#section1" role="tab" aria-controls="section1" class="tabs-trigger js-tabs-trigger">Section 1</a></li>
           <li role="presentation"><a href="#section2" role="tab" aria-controls="section2" class="tabs-trigger js-tabs-trigger">Section 2</a></li>
@@ -91,14 +63,5 @@
 </footer>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.4.1/prism.min.js"></script>
   <script src="main.js"></script>
-  <script>
-    var tabs = document.getElementById("myTabs");
-
-    new AccordionTabs(tabs, {
-      breakpoint: 800,
-      tabsAllowed: true,
-      selectedTab: 2
-    });
-  </script>
   </body>
 </html>
