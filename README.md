@@ -99,14 +99,21 @@ If you need support for IE9, you might want to use [this polyfill](https://githu
 
 ## Changelog
 
+### 0.3.1
+– Cleanup example HTML code
+
+### 0.3.0
+- Add support for multiple instances
+- Update README with basic documentation 
+
 ### 0.2.1
-Breakpoint min-width fix.
+- Breakpoint min-width fix.
 
 ### 0.2.0
-Improved ARIA-roles for the accordion state.
+- Improved ARIA-roles for the accordion state.
 
 ### 0.1.0
-First basic version. Still a lot of cleanup to do. Please use with caution!
+- First basic version. Still a lot of cleanup to do. Please use with caution!
 
 ## License 
 
