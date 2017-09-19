@@ -99,7 +99,7 @@ If you need support for IE9, you might want to use [this polyfill](https://githu
 ## Changelog
 
 ### 0.3.1
-– Cleanup example HTML code
+- Cleanup example HTML code
 
 ### 0.3.0
 - Add support for multiple instances
