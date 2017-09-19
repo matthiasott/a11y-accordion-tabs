@@ -68,7 +68,6 @@ By default, the script looks for all elements with the class `js-tabs` and turns
 But you can also instantiate the component in your JavaScript like this:
 
 ```javascript
-
 var tabs = document.getElementById("myTabs");
 
 new AccordionTabs(tabs);
