@@ -8,7 +8,7 @@
 
   'use strict';
 
-  function AccordionTabs (el, selectedIndex, options) {
+  function AccordionTabs (el, options) {
 
     if (!el) {
       return;
@@ -21,7 +21,8 @@
 
     this.options = this._extend({
       breakpoint: 640,
-      tabsAllowed: true
+      tabsAllowed: true,
+      selectedTab: 0
     }, options);
 
     if(el.getAttribute('data-tabs') == "true"){
@@ -30,14 +31,22 @@
       this.options.tabsAllowed = false;
     }
 
+    if(el.getAttribute('data-breakpoint')){
+      this.options.breakpoint = parseInt(el.getAttribute('data-breakpoint'));
+    }
+
+    if(el.getAttribute('data-selectedTab')){
+      this.options.selectedTab = parseInt(el.getAttribute('data-selectedTab'));
+    }
+
     if (this.tabTriggers.length === 0 || this.tabTriggers.length !== this.tabPanels.length) {
       return;
     }
 
-    this._init(selectedIndex);
+    this._init();
   }
 
-  AccordionTabs.prototype._init = function (selectedIndex) {
+  AccordionTabs.prototype._init = function () {
 
     var _this = this;
 
@@ -82,8 +91,8 @@
       }
     }
 
-    if (!isNaN(selectedIndex)) {
-      this.selectedTab = selectedIndex < this.tabTriggersLength ? selectedIndex : this.tabTriggersLength - 1;
+    if (!isNaN(this.options.selectedTab)) {
+      this.selectedTab = this.options.selectedTab < this.tabTriggersLength ? this.options.selectedTab : this.tabTriggersLength - 1;
     }
 
     this.el.classList.add('is-initialized');
@@ -367,6 +376,46 @@
     };
   };
 
-  new AccordionTabs(document.getElementsByClassName('js-tabs')[0]);
+  var slice = Array.prototype.slice;
+
+  function $(expr, con) {
+    return typeof expr === "string" ? (con || document).querySelector(expr) : expr || null;
+  }
+
+  function $$(expr, con) {
+    return slice.call((con || document).querySelectorAll(expr));
+  }
+
+  // Initialization
+
+  function init() {
+    $$(".js-tabs").forEach(function (input) {
+      new AccordionTabs(input);
+    });
+  }
+
+  // Are we in a browser? Check for Document constructor
+  if (typeof Document !== "undefined") {
+    // DOM already loaded?
+    if (document.readyState !== "loading") {
+      init();
+    }
+    else {
+      // Wait for it
+      document.addEventListener("DOMContentLoaded", init);
+    }
+  }
+
+  // Export on self when in a browser
+  if (typeof self !== "undefined") {
+    self.AccordionTabs = AccordionTabs;
+  }
+
+  // Expose as a CJS module
+  if (typeof module === "object" && module.exports) {
+    module.exports = _;
+  }
+
+  return AccordionTabs;
 
 })();
