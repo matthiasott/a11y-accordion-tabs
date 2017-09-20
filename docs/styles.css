@@ -4,7 +4,7 @@
 }
 
 body {
-  font-family: "Rubik",-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 112.5%;
   line-height: 1.5;
   color: #eee;
@@ -64,7 +64,7 @@ code {
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 2rem;
 }
 
 .header {
@@ -94,7 +94,7 @@ code {
   color: #0c1333;
   background-color: #fff;
   border-radius: 6px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2), 0 0 0 8px #de0840;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2), 0 0 0 8px #de0840, 0 0 200px 30px rgba(0, 126, 255, 0.31);
 }
 
 .tabs-tab-list {
@@ -126,6 +126,10 @@ code {
 .tabs-trigger.is-selected, .tabs-trigger.is-selected:hover, .tabs-trigger.is-selected:focus {
   border-bottom: 2px solid #000;
   color: #000;
+}
+
+.tabs-trigger:active {
+  outline: none;
 }
 
 .tabs-panel {
