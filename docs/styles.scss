@@ -162,7 +162,9 @@ code {
 }
 
 .accordeon-trigger {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   cursor: pointer;
   padding: 15px 20px;
 }
@@ -195,17 +197,16 @@ code {
 .accordeon-trigger-icon {
   display: inline-block;
   float: right;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
 
 .accordeon-trigger-icon svg {
   margin: 0;
-  transition: transform .06s ease-out;
 }
 
-.is-open .accordeon-trigger-icon svg {
-  transform: rotate(180deg);
+[aria-expanded="true"] .vert {
+  display: none;
 }
 
 .label--open, .label--close {

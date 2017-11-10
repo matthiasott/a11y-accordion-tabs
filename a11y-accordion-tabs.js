@@ -25,9 +25,9 @@
       selectedTab: 0
     }, options);
 
-    if(el.getAttribute('data-tabs') == "true"){
+    if(el.getAttribute('data-tabs-allowed') == "true"){
       this.options.tabsAllowed = true;
-    } else if (el.getAttribute('data-tabs') == "false") {
+    } else if (el.getAttribute('data-tabs-allowed') == "false") {
       this.options.tabsAllowed = false;
     }
 
@@ -35,8 +35,8 @@
       this.options.breakpoint = parseInt(el.getAttribute('data-breakpoint'));
     }
 
-    if(el.getAttribute('data-selectedTab')){
-      this.options.selectedTab = parseInt(el.getAttribute('data-selectedTab'));
+    if(el.getAttribute('data-selected-tab')){
+      this.options.selectedTab = parseInt(el.getAttribute('data-selected-tab'));
     }
 
     if (this.tabTriggers.length === 0 || this.tabTriggers.length !== this.tabPanels.length) {

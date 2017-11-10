@@ -42,23 +42,28 @@ The basic HTML structure for the accordion tabs component reads as follows:
 ```html
 <div class="accordion-tabs js-tabs">
   <ul role="tablist" class="tabs-tab-list">
-    <li role="presentation"><a href="#section1" role="tab" aria-controls="section1" class="tabs-trigger js-tabs-trigger">Section 1</a></li>
-    <li role="presentation"><a href="#section2" role="tab" aria-controls="section2" class="tabs-trigger js-tabs-trigger">Section 2</a></li>
-    <li role="presentation"><a href="#section3" role="tab" aria-controls="section3" class="tabs-trigger js-tabs-trigger">Section 3</a></li>
+    <li role="presentation"><a href="#section1" role="tab" id="tab1" aria-controls="section1" aria-selected="true" class="tabs-trigger js-tabs-trigger">Section 1</a></li>
+    <li role="presentation"><a href="#section2" role="tab" id="tab2" aria-controls="section2" class="tabs-trigger js-tabs-trigger">Section 2</a></li>
+    <li role="presentation"><a href="#section3" role="tab" id="tab3" aria-controls="section3" class="tabs-trigger js-tabs-trigger">Section 3</a></li>
   </ul>
-  <section id="section1" role="tabpanel" class="tabs-panel js-tabs-panel" tabindex="0">
+  <section id="section1" role="tabpanel" aria-labelledby="tab1" class="tabs-panel js-tabs-panel" tabindex="0">
     <div class="accordeon-trigger js-accordeon-trigger" aria-controls="section1" aria-expanded="true" tabindex="0">Section 1</div>
     <div class="content" aria-hidden="false">
       abc
     </div>
   </section>
-  <section id="section2" role="tabpanel" class="tabs-panel js-tabs-panel">
+  <section id="section2" role="tabpanel" aria-labelledby="tab2" class="tabs-panel js-tabs-panel">
     <div class="accordeon-trigger js-accordeon-trigger" aria-controls="section2" aria-expanded="false" tabindex="0">Section 2</div>
     <div class="content" aria-hidden="true">
       def
     </div>
   </section>
-  …
+  <section id="section3" role="tabpanel" aria-labelledby="tab3" class="tabs-panel js-tabs-panel">
+    <div class="accordeon-trigger js-accordeon-trigger" aria-controls="section3" aria-expanded="false" tabindex="0">Section 3</div>
+    <div class="content" aria-hidden="true">
+      def
+    </div>
+  </section>
 </div>
 ```
 
@@ -85,8 +90,7 @@ new AccordionTabs(tabs, {
 });
 ```
 
-| Option | Value | Default | Description
-| --- | --- | --- | --- |
+
 | **tabsAllowed** | Boolean | `true` | If `tabsAllowed` is set to `false`, the component always stays an accordion |
 | **breakpoint** | Number | `640` | Defines the min-width breakpoint where the accordion becomes a tabs component. **Make sure to also adjust the CSS accordingly.** |
 | **selectedTab** | Number | `0` | Sets the tab that is selected on init |
@@ -97,6 +101,14 @@ The functions in the script are supported by all modern browsers, including IE10
 If you need support for IE9, you might want to use [this polyfill](https://github.com/eligrey/classList.js) for `element.classList`.
 
 ## Changelog
+
+### 0.4.0
+- Data attributes now follow the W3C naming conventions (no uppercase letters)
+– Improved default aria-roles in the demo HTML code
+– Plus / minus symbols instead of chevrons in the demo code
+
+### 0.3.2
+- Update documentation
 
 ### 0.3.1
 - Cleanup example HTML code
