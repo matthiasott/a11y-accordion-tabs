@@ -413,7 +413,7 @@
 
   // Expose as a CJS module
   if (typeof module === "object" && module.exports) {
-    module.exports = _;
+    module.exports = AccordionTabs;
   }
 
   return AccordionTabs;

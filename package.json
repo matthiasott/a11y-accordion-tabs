@@ -31,8 +31,8 @@
     "test": "make test"
   },
   "devDependencies": {
-    "mocha": "^3.5.3",
-    "node-sass": "^4.5.3",
-    "uglify-js": "^3.1.0"
+    "mocha": "^5.2.0",
+    "node-sass": "^4.10.0",
+    "uglify-js": "^3.4.9"
   }
 }
