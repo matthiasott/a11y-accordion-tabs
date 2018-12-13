@@ -22,7 +22,8 @@
     this.options = this._extend({
       breakpoint: 640,
       tabsAllowed: true,
-      selectedTab: 0
+      selectedTab: 0,
+      startCollapsed: false
     }, options);
 
     if(el.getAttribute('data-tabs-allowed') == "true"){
@@ -37,6 +38,10 @@
 
     if(el.getAttribute('data-selected-tab')){
       this.options.selectedTab = parseInt(el.getAttribute('data-selected-tab'));
+    }
+
+    if(el.getAttribute('data-start-collapsed')){
+      this.options.startCollapsed = el.getAttribute('data-start-collapsed');
     }
 
     if (this.tabTriggers.length === 0 || this.tabTriggers.length !== this.tabPanels.length) {
@@ -100,7 +105,10 @@
       this.el.classList.add('tabs-allowed');
     }
 
-    this.selectTab(this.selectedTab, false);
+    // If the accordion should not start collapsed, open the first element
+    if(this.options.startCollapsed != "true"){
+      this.selectTab(this.selectedTab, false);
+    }
 
     var resizeTabs = this._debounce(function() {
       // This gets delayed for performance reasons
