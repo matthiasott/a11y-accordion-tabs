@@ -47,19 +47,19 @@ The basic HTML structure for the accordion tabs component reads as follows:
     <li role="presentation"><a href="#section3" role="tab" id="tab3" aria-controls="section3" class="tabs-trigger js-tabs-trigger">Section 3</a></li>
   </ul>
   <section id="section1" role="tabpanel" aria-labelledby="tab1" class="tabs-panel js-tabs-panel" tabindex="0">
-    <div class="accordeon-trigger js-accordeon-trigger" aria-controls="section1" aria-expanded="true" tabindex="0">Section 1</div>
+    <div class="accordion-trigger js-accordion-trigger" aria-controls="section1" aria-expanded="true" tabindex="0">Section 1</div>
     <div class="content" aria-hidden="false">
       abc
     </div>
   </section>
   <section id="section2" role="tabpanel" aria-labelledby="tab2" class="tabs-panel js-tabs-panel">
-    <div class="accordeon-trigger js-accordeon-trigger" aria-controls="section2" aria-expanded="false" tabindex="0">Section 2</div>
+    <div class="accordion-trigger js-accordion-trigger" aria-controls="section2" aria-expanded="false" tabindex="0">Section 2</div>
     <div class="content" aria-hidden="true">
       def
     </div>
   </section>
   <section id="section3" role="tabpanel" aria-labelledby="tab3" class="tabs-panel js-tabs-panel">
-    <div class="accordeon-trigger js-accordeon-trigger" aria-controls="section3" aria-expanded="false" tabindex="0">Section 3</div>
+    <div class="accordion-trigger js-accordion-trigger" aria-controls="section3" aria-expanded="false" tabindex="0">Section 3</div>
     <div class="content" aria-hidden="true">
       def
     </div>
@@ -145,4 +145,4 @@ Matthias Ott
 <https://matthiasott.com>  
 <https://twitter.com/m_ott>
 
-Copyright (c) 2017 [Matthias Ott](https://matthiasott.com)
+Copyright (c) 2017–2020 [Matthias Ott](https://matthiasott.com)

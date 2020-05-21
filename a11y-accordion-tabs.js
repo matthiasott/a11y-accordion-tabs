@@ -17,7 +17,7 @@
     this.el = el;
     this.tabTriggers = this.el.getElementsByClassName('js-tabs-trigger');
     this.tabPanels = this.el.getElementsByClassName('js-tabs-panel');
-    this.accordeonTriggers = this.el.getElementsByClassName('js-accordeon-trigger');
+    this.accordionTriggers = this.el.getElementsByClassName('js-accordion-trigger');
 
     this.options = this._extend({
       breakpoint: 640,
@@ -56,7 +56,7 @@
     var _this = this;
 
     this.tabTriggersLength = this.tabTriggers.length;
-    this.accordeonTriggersLength = this.accordeonTriggers.length;
+    this.accordionTriggersLength = this.accordionTriggers.length;
     this.selectedTab = 0;
     this.prevSelectedTab = null;
     this.clickListener = this._clickEvent.bind(this);
@@ -69,9 +69,9 @@
     };
 
     if(window.innerWidth >= this.options.breakpoint && this.options.tabsAllowed) {
-        this.isAccordeon = false;
+        this.isAccordion = false;
     } else {
-        this.isAccordeon = true;
+        this.isAccordion = true;
     }
 
     for (var i = 0; i < this.tabTriggersLength; i++) {
@@ -86,12 +86,12 @@
       this._hide(i);
     }
 
-    for (var i = 0; i < this.accordeonTriggersLength; i++) {
-      this.accordeonTriggers[i].index = i;
-      this.accordeonTriggers[i].addEventListener('click', this.clickListener, false);
-      this.accordeonTriggers[i].addEventListener('keydown', this.keydownListener, false);
+    for (var i = 0; i < this.accordionTriggersLength; i++) {
+      this.accordionTriggers[i].index = i;
+      this.accordionTriggers[i].addEventListener('click', this.clickListener, false);
+      this.accordionTriggers[i].addEventListener('keydown', this.keydownListener, false);
 
-      if (this.accordeonTriggers[i].classList.contains('is-selected')) {
+      if (this.accordionTriggers[i].classList.contains('is-selected')) {
         this.selectedTab = i;
       }
     }
@@ -113,13 +113,13 @@
     var resizeTabs = this._debounce(function() {
       // This gets delayed for performance reasons
       if(window.innerWidth >= _this.options.breakpoint && _this.options.tabsAllowed) {
-        _this.isAccordeon = false;
+        _this.isAccordion = false;
         if (_this.options.tabsAllowed) {
           _this.el.classList.add('tabs-allowed');
         }
         _this.selectTab(_this.selectedTab);
       } else {
-        _this.isAccordeon = true;
+        _this.isAccordion = true;
         _this.el.classList.remove('tabs-allowed');
         if(_this.options.startCollapsed != "true" || _this.options.startCollapsed != true){
           _this.selectTab(_this.selectedTab);
@@ -140,16 +140,16 @@
     var closestTab = 0;
 
     if (closestTrigger == null) {
-      closestTrigger = this._getClosest(e.target, '.js-accordeon-trigger');
+      closestTrigger = this._getClosest(e.target, '.js-accordion-trigger');
       closestTab = this._getClosest(closestTrigger, '.js-tabs-panel');
-      this.isAccordeon = true;
+      this.isAccordion = true;
     } else {
-      this.isAccordeon = false;
+      this.isAccordion = false;
     }
 
     var targetIndex = e.target.index != null ? e.target.index : closestTab.index;
 
-    if (targetIndex === this.selectedTab && !this.isAccordeon) {
+    if (targetIndex === this.selectedTab && !this.isAccordion) {
       return;
     }
 
@@ -167,10 +167,10 @@
       return;
     }
 
-    if (e.keyCode === this.keys.prev && e.target.index > 0 && !this.isAccordeon) {
+    if (e.keyCode === this.keys.prev && e.target.index > 0 && !this.isAccordion) {
       targetIndex = e.target.index - 1;
     }
-    else if (e.keyCode === this.keys.next && e.target.index < this.tabTriggersLength - 1 && !this.isAccordeon) {
+    else if (e.keyCode === this.keys.next && e.target.index < this.tabTriggersLength - 1 && !this.isAccordion) {
       targetIndex = e.target.index + 1;
     }
     else if (e.keyCode === this.keys.space || e.keyCode === this.keys.enter) {
@@ -191,7 +191,7 @@
     this.tabTriggers[index].classList.add('is-selected');
     this.tabTriggers[index].setAttribute('aria-selected', true);
 
-    this.accordeonTriggers[index].setAttribute('aria-expanded', true);
+    this.accordionTriggers[index].setAttribute('aria-expanded', true);
 
     var panelContent = this.tabPanels[index].getElementsByClassName("content")[0];
     panelContent.setAttribute('aria-hidden', false);
@@ -212,7 +212,7 @@
     this.tabTriggers[index].setAttribute('aria-selected', false);
     this.tabTriggers[index].setAttribute('tabindex', -1);
 
-    this.accordeonTriggers[index].setAttribute('aria-expanded', false);
+    this.accordionTriggers[index].setAttribute('aria-expanded', false);
 
     var panelContent = this.tabPanels[index].getElementsByClassName("content")[0];
     panelContent.setAttribute('aria-hidden', true);
@@ -227,7 +227,7 @@
   AccordionTabs.prototype.selectTab = function (index, userInvoked) {
 
     if (index === null) {
-      if(this.isAccordeon) {
+      if(this.isAccordion) {
         return;
       } else {
         index = 0;
@@ -248,13 +248,13 @@
       return;
     }
 
-    if (this.isAccordeon) {
+    if (this.isAccordion) {
 
       this.prevSelectedTab = this.selectedTab;
       this.selectedTab = index;
 
     } else {
-      if (this.prevSelectedTab === null || !this.isAccordeon) {
+      if (this.prevSelectedTab === null || !this.isAccordion) {
         for (var i = 0; i < this.tabTriggersLength; i++) {
           if (i !== index) {
             this._hide(i);

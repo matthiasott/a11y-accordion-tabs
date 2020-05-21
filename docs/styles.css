@@ -167,7 +167,7 @@ code {
   display: inherit;
 }
 
-.accordeon-trigger {
+.accordion-trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -175,12 +175,12 @@ code {
   padding: 15px 20px;
 }
 
-.accordeon-trigger-icon {
+.accordion-trigger-icon {
   pointer-events: none;
 }
 
 @media (min-width: 40em) {
-  .tabs-allowed .accordeon-trigger {
+  .tabs-allowed .accordion-trigger {
     display: none;
   }
   .tabs-allowed .tabs-trigger {
@@ -200,14 +200,14 @@ code {
   }
 }
 
-.accordeon-trigger-icon {
+.accordion-trigger-icon {
   display: inline-block;
   float: right;
   width: 22px;
   height: 22px;
 }
 
-.accordeon-trigger-icon svg {
+.accordion-trigger-icon svg {
   margin: 0;
 }
 
