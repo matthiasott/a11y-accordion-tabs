@@ -42,6 +42,8 @@
 
     if(el.getAttribute('data-start-collapsed') == "true"){
       this.options.startCollapsed = true;
+    } else if (el.getAttribute('data-start-collapsed') == "false") {
+      this.options.startCollapsed = false;
     }
 
     if (this.tabTriggers.length === 0 || this.tabTriggers.length !== this.tabPanels.length) {
@@ -106,7 +108,7 @@
     }
 
     // If the accordion should not start collapsed, open the first element
-    if(this.options.startCollapsed != "true" || this.options.startCollapsed != true){
+    if(!this.options.startCollapsed){
       this.selectTab(this.selectedTab, false);
     }
 
@@ -121,7 +123,7 @@
       } else {
         _this.isAccordion = true;
         _this.el.classList.remove('tabs-allowed');
-        if(_this.options.startCollapsed != "true" || _this.options.startCollapsed != true){
+        if(!_this.options.startCollapsed){
           _this.selectTab(_this.selectedTab);
         }
       }
