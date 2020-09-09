@@ -108,7 +108,7 @@
     }
 
     // If the accordion should not start collapsed, open the first element
-    if(!this.options.startCollapsed){
+    if(!this.options.startCollapsed || !this.isAccordion){
       this.selectTab(this.selectedTab, false);
     }
 
