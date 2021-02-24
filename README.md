@@ -107,7 +107,7 @@ If you need support for IE9, you might want to use [this polyfill](https://githu
 ## Changelog
 
 ### 0.6.0
-- New option `startCollapsed`: Defines if the accordion should be collapsed on startup
+- New option `tabsDirection`: Determines if the accordion keyboard controls are horizontal or vertical
 
 ### 0.5.0
 - New option `startCollapsed`: Defines if the accordion should be collapsed on startup
