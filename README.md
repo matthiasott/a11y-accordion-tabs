@@ -91,7 +91,8 @@ new AccordionTabs(tabs, {
   startCollapsed: false
 });
 ```
-
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
 | **tabsAllowed** | Boolean | `true` | If `tabsAllowed` is set to `false`, the component always stays an accordion |
 | **tabsDirection** | String | `horizontal` | When set to `vertical`, moving between tabs uses up/down arrow keys instead of left/right |
 | **breakpoint** | Number | `640` | Defines the min-width breakpoint where the accordion becomes a tabs component. **Make sure to also adjust the CSS accordingly.** |
