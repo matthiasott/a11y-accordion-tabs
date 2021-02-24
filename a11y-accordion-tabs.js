@@ -21,6 +21,7 @@
 
     this.options = this._extend({
       breakpoint: 640,
+      tabsDirection: "horizontal",
       tabsAllowed: true,
       selectedTab: 0,
       startCollapsed: false
@@ -31,6 +32,13 @@
     } else if (el.getAttribute('data-tabs-allowed') == "false") {
       this.options.tabsAllowed = false;
     }
+
+    if(el.getAttribute('data-tabs-direction') == "horizontal"){
+      this.options.tabsDirection = "horizontal";
+    } else if (el.getAttribute('data-tabs-direction') == "vertical") {
+      this.options.tabsDirection = "vertical";
+    }
+
 
     if(el.getAttribute('data-breakpoint')){
       this.options.breakpoint = parseInt(el.getAttribute('data-breakpoint'));
@@ -63,12 +71,18 @@
     this.prevSelectedTab = null;
     this.clickListener = this._clickEvent.bind(this);
     this.keydownListener = this._keydownEvent.bind(this);
+
     this.keys = {
-      prev: 37,
-      next: 39,
-      space: 32,
-      enter: 13
-    };
+        space: 32,
+        enter: 13
+    }
+    if (this.options.tabsDirection == "horizontal") {
+        this.keys.prev = 37;
+        this.keys.next = 39;
+    } else if (this.options.tabsDirection == "vertical") {
+        this.keys.prev = 38;
+        this.keys.next = 40;
+    }
 
     if(window.innerWidth >= this.options.breakpoint && this.options.tabsAllowed) {
         this.isAccordion = false;

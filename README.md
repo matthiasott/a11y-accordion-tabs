@@ -86,12 +86,14 @@ a11y-accordion-tabs comes with a few options to make the component more flexible
 new AccordionTabs(tabs, {
   breakpoint: 800,
   tabsAllowed: true,
+  tabsDirection: "horizontal",
   selectedTab: 2,
   startCollapsed: false
 });
 ```
 
 | **tabsAllowed** | Boolean | `true` | If `tabsAllowed` is set to `false`, the component always stays an accordion |
+| **tabsDirection** | String | `horizontal` | When set to `vertical`, moving between tabs uses up/down arrow keys instead of left/right |
 | **breakpoint** | Number | `640` | Defines the min-width breakpoint where the accordion becomes a tabs component. **Make sure to also adjust the CSS accordingly.** |
 | **selectedTab** | Number | `0` | Sets the tab that is selected on init |
 | **startCollapsed** | Boolean | `false` | Defines if the accordion should be collapsed on startup |
@@ -102,6 +104,9 @@ The functions in the script are supported by all modern browsers, including IE10
 If you need support for IE9, you might want to use [this polyfill](https://github.com/eligrey/classList.js) for `element.classList`.
 
 ## Changelog
+
+### 0.6.0
+- New option `startCollapsed`: Defines if the accordion should be collapsed on startup
 
 ### 0.5.0
 - New option `startCollapsed`: Defines if the accordion should be collapsed on startup
