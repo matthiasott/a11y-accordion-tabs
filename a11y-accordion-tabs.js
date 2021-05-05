@@ -117,7 +117,7 @@
     }
 
     this.el.classList.add('is-initialized');
-    if (this.options.tabsAllowed) {
+    if (window.innerWidth >= this.options.breakpoint && this.options.tabsAllowed) {
       this.el.classList.add('tabs-allowed');
     }
 
