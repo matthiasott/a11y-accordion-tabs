@@ -46,26 +46,28 @@ The basic HTML structure for the accordion tabs component reads as follows:
     <li role="presentation"><a href="#section2" role="tab" id="tab2" aria-controls="section2" class="tabs-trigger js-tabs-trigger">Section 2</a></li>
     <li role="presentation"><a href="#section3" role="tab" id="tab3" aria-controls="section3" class="tabs-trigger js-tabs-trigger">Section 3</a></li>
   </ul>
-  <section id="section1" role="tabpanel" aria-labelledby="tab1" class="tabs-panel js-tabs-panel" tabindex="0">
-    <button class="accordion-trigger js-accordion-trigger" aria-controls="section1" aria-expanded="true" tabindex="0">Section 1</button>
+  <section id="section1" role="tabpanel" aria-labelledby="tab1" class="tabs-panel js-tabs-panel">
+    <button class="accordion-trigger js-accordion-trigger" aria-controls="section1" aria-expanded="true">Section 1</button>
     <div class="content" aria-hidden="false">
       abc
     </div>
   </section>
   <section id="section2" role="tabpanel" aria-labelledby="tab2" class="tabs-panel js-tabs-panel">
-    <button class="accordion-trigger js-accordion-trigger" aria-controls="section2" aria-expanded="false" tabindex="0">Section 2</button>
+    <button class="accordion-trigger js-accordion-trigger" aria-controls="section2" aria-expanded="false">Section 2</button>
     <div class="content" aria-hidden="true">
       def
     </div>
   </section>
   <section id="section3" role="tabpanel" aria-labelledby="tab3" class="tabs-panel js-tabs-panel">
-    <button class="accordion-trigger js-accordion-trigger" aria-controls="section3" aria-expanded="false" tabindex="0">Section 3</button>
+    <button class="accordion-trigger js-accordion-trigger" aria-controls="section3" aria-expanded="false">Section 3</button>
     <div class="content" aria-hidden="true">
       def
     </div>
   </section>
 </div>
 ```
+
+For an advanced version [have a look at the demo](https://matthiasott.github.io/a11y-accordion-tabs/).
 
 By default, the script looks for all elements with the class `js-tabs` and turns them into an accordion tabs component automatically.
 But you can also instantiate the component in your JavaScript like this:
