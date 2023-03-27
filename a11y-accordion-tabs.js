@@ -149,7 +149,7 @@
       this.isAccordion = false;
     }
 
-    var targetIndex = e.target.index != null ? e.target.index : closestTab.index;
+    var targetIndex = e.target.index != null ? e.target.index : closestTab.index != null ? closestTab.index : closestTrigger.index;
 
     if (targetIndex === this.selectedTab && !this.isAccordion) {
       return;
