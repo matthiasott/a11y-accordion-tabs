@@ -15,9 +15,9 @@
     }
 
     this.el = el;
-    this.tabTriggers = this.el.getElementsByClassName('js-tabs-trigger');
-    this.tabPanels = this.el.getElementsByClassName('js-tabs-panel');
-    this.accordionTriggers = this.el.getElementsByClassName('js-accordion-trigger');
+    this.tabTriggers = this.el.querySelector(':scope > ul').getElementsByClassName('js-tabs-trigger');
+    this.tabPanels = this.el.querySelectorAll(':scope > .js-tabs-panel');
+    this.accordionTriggers = this.el.querySelectorAll(':scope > .js-tabs-panel .js-accordion-trigger');
 
     this.options = this._extend({
       breakpoint: 640,
