@@ -139,17 +139,21 @@
     e.preventDefault();
 
     var closestTrigger = this._getClosest(e.target, '.js-tabs-trigger');
-    var closestTab = 0;
 
     if (closestTrigger == null) {
       closestTrigger = this._getClosest(e.target, '.js-accordion-trigger');
-      closestTab = this._getClosest(closestTrigger, '.js-tabs-panel');
       this.isAccordion = true;
     } else {
       this.isAccordion = false;
     }
 
-    var targetIndex = e.target.index != null ? e.target.index : closestTab.index;
+    // Bail out if the click didn't originate inside any known trigger, or
+    // the trigger has no index assigned (e.g. added to the DOM after init).
+    if (closestTrigger == null || closestTrigger.index == null) {
+      return;
+    }
+
+    var targetIndex = (e.target.index != null) ? e.target.index : closestTrigger.index;
 
     if (targetIndex === this.selectedTab && !this.isAccordion) {
       return;
@@ -228,7 +232,7 @@
 
   AccordionTabs.prototype.selectTab = function (index, userInvoked) {
 
-    if (index === null) {
+    if (index == null || !this.tabPanels[index]) {
       if(this.isAccordion) {
         return;
       } else {
