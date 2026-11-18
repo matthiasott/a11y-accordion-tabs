@@ -105,6 +105,95 @@ describe('a11y-accordion-tabs browser regression suite', function () {
     if (browser) await browser.close();
   });
 
+  describe('opt-in deep links', function () {
+    const url = 'https://fixture.test/demo?lang=en';
+    const attrs = 'data-deep-link="true" data-selected-tab="1" data-start-collapsed="true"';
+    let page;
+
+    beforeEach(async function () {
+      page = await browser.newPage({ viewport: { width: 800, height: 800 } });
+      const body = '<a href="#two-panel3">Jump to three</a>' + componentMarkup('one', attrs) +
+        componentMarkup('two', attrs) + componentMarkup('off');
+      await page.route(url, route => route.fulfill({ contentType: 'text/html', body: pageShell(body) }));
+    });
+
+    afterEach(async function () { await page.close(); });
+
+    async function load (hash) {
+      await page.goto(url + hash);
+      await page.addScriptTag({ path: sourcePath });
+    }
+
+    it('opens the incoming panel in its own instance, overriding even a collapsed start', async function () {
+      await page.setViewportSize({ width: 320, height: 800 });
+      await load('#two-panel3');
+      assert.equal(await page.locator('.js-accordion-trigger[aria-expanded="true"]').count(), 2); // one in the default (off) instance
+      assert.equal(await page.locator('#two-panel3 .content').isVisible(), true);
+      assert.equal(await page.locator('#two-panel2 .content').isVisible(), false);
+      assert.equal(await page.locator('#one-panel3 .content').isVisible(), false);
+    });
+
+    it('replaces only the fragment on pointer and keyboard activation without adding history entries', async function () {
+      await load('#after');
+      const length = await page.evaluate(() => { history.replaceState({ existing: 1 }, ''); return history.length; });
+      await page.locator('#one-tab1').click();
+      assert.equal(page.url(), url + '#one-panel1');
+      const scroll = await page.evaluate(() => scrollY);
+      await page.keyboard.press('ArrowRight');
+      assert.equal(page.url(), url + '#one-panel2');
+      assert.deepEqual(await page.evaluate(() => [history.length, history.state, document.activeElement.id, scrollY]),
+        [length, { existing: 1 }, 'one-tab2', scroll]);
+      await page.locator('#off-tab3').click();
+      assert.equal(page.url(), url + '#one-panel2');
+    });
+
+    it('honors incoming anchors and Back/Forward without selecting a panel in another set', async function () {
+      await load('#two-panel1');
+      assert.equal(await page.locator('#two-tab1').getAttribute('aria-selected'), 'true');
+      await page.getByRole('link', { name: 'Jump to three' }).click();
+      const visible = id => page.locator(`#two-panel${id} .content`).waitFor({ state: 'visible', timeout: 2000 });
+      await visible(3);
+      await page.goBack();
+      await visible(1);
+      await page.goForward();
+      await visible(3);
+      assert.equal(await page.locator('#one-tab2').getAttribute('aria-selected'), 'true');
+    });
+
+    it('clears only the matching fragment when a disclosure closes', async function () {
+      await page.setViewportSize({ width: 320, height: 800 });
+      await load('#after');
+      const first = page.locator('#one-panel1 .js-accordion-trigger');
+      const second = page.locator('#one-panel2 .js-accordion-trigger');
+      await first.click();
+      await second.press('Enter');
+      assert.equal(await first.getAttribute('aria-expanded'), 'true');
+      await first.click();
+      assert.equal(page.url(), url + '#one-panel2');
+      await second.press('Space');
+      assert.equal(page.url(), url);
+    });
+
+    it('ignores malformed fragments and leaves the URL alone on resize and API calls', async function () {
+      await load('#bad%');
+      assert.equal(await page.locator('#one-tab2').getAttribute('aria-selected'), 'true');
+      await page.evaluate(() => {
+        const el = document.createElement('div');
+        el.innerHTML = document.querySelector('.accordion-tabs').innerHTML.replaceAll('one-', 'manual-');
+        document.body.append(el);
+        window.manual = new AccordionTabs(el, { deepLink: true });
+        window.manual.selectTab(2, true);
+      });
+      await page.setViewportSize({ width: 320, height: 800 });
+      assert.equal(page.url(), url + '#bad%');
+      await page.locator('#manual-panel2 .js-accordion-trigger').click();
+      assert.equal(page.url(), url + '#manual-panel2');
+      await page.evaluate(() => window.manual.destroy());
+      await page.evaluate(() => { location.hash = 'manual-panel3'; });
+      assert.equal(await page.locator('#manual-panel3.is-open').count(), 0);
+    });
+  });
+
   it('initializes the documented tabs mode, ARIA relationships, and tab order', async function () {
     const { context, page } = await openComponent(browser, componentMarkup('a'));
     try {

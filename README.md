@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/a11y-accordion-tabs.svg)](https://badge.fury.io/js/a11y-accordion-tabs)
 
-A small script (less than 1.6 KB compressed and gzipped) with zero dependencies for creating accessible accordion tabs components.
+A small script (less than 2 KB minified and gzipped) with zero dependencies for creating accessible accordion tabs components.
 Based on the [accessible tabs component by @stowball](https://codepen.io/stowball/pen/xVWwWe).
 
 The component is an accordion on smaller screens and switches to a tab view on larger viewports.
@@ -98,13 +98,22 @@ new AccordionTabs(tabs, {
 | `breakpoint` | `data-breakpoint` | `640` | Minimum viewport width in CSS pixels for tabs. The option only changes JavaScript. Update the matching `@media (min-width: 640px)` in your stylesheet too. |
 | `selectedTab` | `data-selected-tab` | `0` | Zero-based index of the initially open panel (bounded to the available panels). |
 | `startCollapsed` | `data-start-collapsed` | `false` | Start with no open panel **in accordion mode only**. Tabs always start with one selected panel, the first by default. |
+| `deepLink` | `data-deep-link` | `false` | Reveal and share panels by their HTML `id` in the URL fragment. |
 
 Data attributes take precedence over constructor options. Write boolean attributes as `"true"` or `"false"`.
+
+### Deep links
+
+Add `data-deep-link="true"` to the `.js-tabs` root (or pass `{ deepLink: true }` to the constructor). With the markup above, `#section2` opens the panel whose `id` is `section2`, not the tab whose `id` is `tab2`. Use a stable, page-unique panel ID so shared links keep working if panels are reordered.
+
+On load, a matching fragment overrides `selectedTab` and `startCollapsed`. Following a fragment link or using Back/Forward reveals and scrolls to that panel; other components and unrelated fragments are left alone. In accordion mode, following a link opens the panel without closing others.
+
+Activating a trigger by pointer or keyboard updates the fragment without jumping to the panel or adding a history entry. Closing a disclosure clears the fragment only if it names that disclosure's panel. Resizing and calls to `selectTab()` do not change the URL.
 
 ## Instance methods
 
 - `instance.selectTab(index)` opens a panel without moving focus. In tabs mode only that panel stays open; in accordion mode other open panels stay open. An optional second argument of `true` treats the selection as user activation (including toggling an open disclosure).
-- `instance.destroy()` removes input and breakpoint listeners and clears the enhanced state. With the supplied stylesheet the content returns to its readable, non-interactive layout. Create a new instance to re-enable it.
+- `instance.destroy()` removes input, breakpoint and fragment listeners and clears the enhanced state. With the supplied stylesheet the content returns to its readable, non-interactive layout. Create a new instance to re-enable it.
 
 The component emits no custom events.
 

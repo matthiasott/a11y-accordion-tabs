@@ -6,14 +6,22 @@
   'use strict';
 
   function readOptions (data, options) {
-    const settings = { breakpoint: 640, tabsAllowed: true, selectedTab: 0, startCollapsed: false, ...options };
-    for (const key of ['tabsAllowed', 'startCollapsed']) {
+    const settings = { breakpoint: 640, tabsAllowed: true, selectedTab: 0, startCollapsed: false, deepLink: false, ...options };
+    for (const key of ['tabsAllowed', 'startCollapsed', 'deepLink']) {
       if (data[key] === 'true' || data[key] === 'false') settings[key] = data[key] === 'true';
     }
     for (const key of ['breakpoint', 'selectedTab']) {
       if (data[key]) settings[key] = parseInt(data[key], 10);
     }
     return settings;
+  }
+
+  function fragmentId () {
+    try {
+      return decodeURIComponent(window.location.hash.slice(1));
+    } catch (error) {
+      return ''; // Malformed percent escape, not a panel link.
+    }
   }
 
   function AccordionTabs (el, options) {
@@ -55,7 +63,12 @@
     };
     this.el.classList.add('is-initialized');
     this._syncMode();
-    if (!this.isAccordion || !this.options.startCollapsed) this.selectTab(this.selectedTab);
+    if (this.options.deepLink) {
+      this.hashListener = this._revealFragment.bind(this);
+      window.addEventListener('hashchange', this.hashListener);
+    }
+    const linked = this.hashListener && this.hashListener();
+    if (!linked && (!this.isAccordion || !this.options.startCollapsed)) this.selectTab(this.selectedTab);
     if (this.options.tabsAllowed) this.media.addEventListener('change', this.modeListener);
   }
 
@@ -68,9 +81,32 @@
     });
   };
 
+  AccordionTabs.prototype._revealFragment = function () {
+    const id = fragmentId();
+    const index = id ? this.tabPanels.findIndex(panel => panel.id === id) : -1;
+    if (index === -1) return false;
+    this.selectTab(index);
+    // Native fragment scrolling may already have skipped this then-hidden panel.
+    this.tabPanels[index].scrollIntoView();
+    return true;
+  };
+
+  AccordionTabs.prototype._activate = function (index) {
+    this.selectTab(index, true);
+    if (!this.options.deepLink) return;
+    const panel = this.tabPanels[index];
+    if (!panel.id) return;
+    const open = panel.classList.contains('is-open');
+    const matches = fragmentId() === panel.id;
+    if (open === matches) return;
+    const url = new URL(window.location.href);
+    url.hash = open ? encodeURIComponent(panel.id) : '';
+    window.history.replaceState(window.history.state, '', url);
+  };
+
   AccordionTabs.prototype._clickEvent = function (e) {
     e.preventDefault();
-    this.selectTab(e.currentTarget.index, true);
+    this._activate(e.currentTarget.index);
   };
 
   AccordionTabs.prototype._keydownEvent = function (e) {
@@ -81,7 +117,7 @@
     else if (e.key !== ' ' && e.key !== 'Enter') return;
     else if (trigger.matches('button') || (trigger.matches('a[href]') && e.key === 'Enter')) return; // Native click.
     e.preventDefault();
-    this.selectTab(index, true);
+    this._activate(index);
   };
 
   AccordionTabs.prototype._setOpen = function (i, open) {
@@ -125,6 +161,7 @@
 
   AccordionTabs.prototype.destroy = function () {
     if (!this.modeListener) return;
+    if (this.hashListener) window.removeEventListener('hashchange', this.hashListener);
     this.media.removeEventListener('change', this.modeListener);
     this.modeListener = null;
     this.tabTriggers.forEach((tab, i) => {
