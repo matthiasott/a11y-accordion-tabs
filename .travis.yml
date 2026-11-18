@@ -1,7 +1,12 @@
 language: node_js
 node_js:
-  - "4"
+  - "22"
 install:
-  - "npm install"
+  - npm ci
+  - npm run setup:browser
 script:
-  - "make test"
+  - npm run lint
+  - npm run build
+  - npm test
+  - npm run test:browser
+  - npm run test:package

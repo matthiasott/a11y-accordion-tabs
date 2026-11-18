@@ -4,6 +4,7 @@
 }
 
 body {
+  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size:112.5%;
   line-height: 1.5;
@@ -72,6 +73,8 @@ code {
     font-size:1rem;
     text-align: center;
 
+    p a { text-decoration: underline; }
+
     a, a:visited {
         color:white;
         margin:0 1rem;
@@ -93,7 +96,7 @@ code {
 }
 
 .tabs-tab-list {
-  display: flex;
+  display: none;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -123,10 +126,6 @@ code {
   color: #000;
 }
 
-.tabs-trigger:active {
-  outline:none;
-}
-
 .tabs-panel {
   display: block;
   margin: 0;
@@ -153,35 +152,30 @@ code {
   display: none;
 }
 
-.tabs-panel:active, .tabs-panel:focus {
-  outline: none;
-}
-
-.is-initialized.tabs-allowed .tabs-panel {
-  display: inherit;
+.accordion-tabs:not(.is-initialized) .accordion-trigger {
+  display: none;
 }
 
 .accordion-trigger {
   display: flex;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  text-align: start;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
   padding: 15px 20px;
 }
 
-.accordion-trigger-icon {
-  pointer-events: none;
-}
-
-@media (min-width: 40em) {
+@media (min-width: 640px) {
   .tabs-allowed .accordion-trigger {
     display: none;
   }
   .tabs-allowed .tabs-trigger {
     display: block;
-  }
-  .tabs-allowed .tabs-panel {
-    display: none;
   }
   .tabs-allowed .tabs-panel.is-hidden {
     display: none;
@@ -190,6 +184,7 @@ code {
     border-top: 2px solid #eee;
   }
   .tabs-allowed .tabs-tab-list {
+    display: flex;
     margin-bottom: -2px;
   }
 }

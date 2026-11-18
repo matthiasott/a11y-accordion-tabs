@@ -1,433 +1,162 @@
 /*
-*  Accessible AccordionTabs, by Matthias Ott (@m_ott)
-*
-*  Based on the work of @stowball (https://codepen.io/stowball/pen/xVWwWe)
-*
-*/
+ * Accessible AccordionTabs, by Matthias Ott (@m_ott)
+ * Based on the work of @stowball (https://codepen.io/stowball/pen/xVWwWe)
+ */
 (function () {
-
   'use strict';
 
-  function AccordionTabs (el, options) {
-
-    if (!el) {
-      return;
+  function readOptions (data, options) {
+    const settings = { breakpoint: 640, tabsAllowed: true, selectedTab: 0, startCollapsed: false, ...options };
+    for (const key of ['tabsAllowed', 'startCollapsed']) {
+      if (data[key] === 'true' || data[key] === 'false') settings[key] = data[key] === 'true';
     }
-
-    this.el = el;
-    this.tabTriggers = this.el.getElementsByClassName('js-tabs-trigger');
-    this.tabPanels = this.el.getElementsByClassName('js-tabs-panel');
-    this.accordionTriggers = this.el.getElementsByClassName('js-accordion-trigger');
-
-    this.options = this._extend({
-      breakpoint: 640,
-      tabsAllowed: true,
-      selectedTab: 0,
-      startCollapsed: false
-    }, options);
-
-    if(el.getAttribute('data-tabs-allowed') == "true"){
-      this.options.tabsAllowed = true;
-    } else if (el.getAttribute('data-tabs-allowed') == "false") {
-      this.options.tabsAllowed = false;
+    for (const key of ['breakpoint', 'selectedTab']) {
+      if (data[key]) settings[key] = parseInt(data[key], 10);
     }
-
-    if(el.getAttribute('data-breakpoint')){
-      this.options.breakpoint = parseInt(el.getAttribute('data-breakpoint'));
-    }
-
-    if(el.getAttribute('data-selected-tab')){
-      this.options.selectedTab = parseInt(el.getAttribute('data-selected-tab'));
-    }
-
-    if(el.getAttribute('data-start-collapsed') == "true"){
-      this.options.startCollapsed = true;
-    } else if (el.getAttribute('data-start-collapsed') == "false") {
-      this.options.startCollapsed = false;
-    }
-
-    if (this.tabTriggers.length === 0 || this.tabTriggers.length !== this.tabPanels.length) {
-      return;
-    }
-
-    this._init();
+    return settings;
   }
 
-  AccordionTabs.prototype._init = function () {
+  function AccordionTabs (el, options) {
+    if (!el) return;
+    this.el = el;
+    this.tabTriggers = Array.from(el.getElementsByClassName('js-tabs-trigger'));
+    this.tabPanels = Array.from(el.getElementsByClassName('js-tabs-panel'));
+    this.accordionTriggers = Array.from(el.getElementsByClassName('js-accordion-trigger'));
+    this.contents = this.tabPanels.map(panel => panel.querySelector('.content'));
+    const count = this.tabTriggers.length;
+    if (!count || count !== this.tabPanels.length || count !== this.accordionTriggers.length || this.contents.includes(null)) return;
 
-    var _this = this;
-
-    this.tabTriggersLength = this.tabTriggers.length;
-    this.accordionTriggersLength = this.accordionTriggers.length;
-    this.selectedTab = 0;
-    this.prevSelectedTab = null;
+    this.options = readOptions(el.dataset, options);
+    const index = Number(this.options.selectedTab);
+    this.selectedTab = Number.isInteger(index) ? Math.max(0, Math.min(count - 1, index)) : 0;
+    this.media = window.matchMedia(`(min-width: ${Number(this.options.breakpoint)}px)`);
+    this.isAccordion = !this.options.tabsAllowed || !this.media.matches;
+    this.managedRole = this.tabPanels.map(panel => !panel.hasAttribute('role'));
+    this.needsButtonRole = this.accordionTriggers.map(trigger => !trigger.matches('button, [role]'));
     this.clickListener = this._clickEvent.bind(this);
     this.keydownListener = this._keydownEvent.bind(this);
-    this.keys = {
-      prev: 37,
-      next: 39,
-      space: 32,
-      enter: 13
+
+    this.tabTriggers.forEach((tab, i) => {
+      const accordion = this.accordionTriggers[i];
+      for (const trigger of [tab, accordion]) {
+        trigger.index = i;
+        trigger.addEventListener('click', this.clickListener);
+        trigger.addEventListener('keydown', this.keydownListener);
+      }
+      // Support the focusable div in earlier versions of the markup.
+      if (this.needsButtonRole[i]) accordion.setAttribute('role', 'button');
+      this._setOpen(i, false);
+    });
+
+    this.modeListener = () => {
+      this.isAccordion = !this.media.matches;
+      this._syncMode();
+      if (!this.isAccordion) this.selectTab(this.selectedTab);
     };
-
-    if(window.innerWidth >= this.options.breakpoint && this.options.tabsAllowed) {
-        this.isAccordion = false;
-    } else {
-        this.isAccordion = true;
-    }
-
-    for (var i = 0; i < this.tabTriggersLength; i++) {
-      this.tabTriggers[i].index = i;
-      this.tabTriggers[i].addEventListener('click', this.clickListener, false);
-      this.tabTriggers[i].addEventListener('keydown', this.keydownListener, false);
-
-      if (this.tabTriggers[i].classList.contains('is-selected')) {
-        this.selectedTab = i;
-      }
-
-      this._hide(i);
-    }
-
-    for (var i = 0; i < this.accordionTriggersLength; i++) {
-      this.accordionTriggers[i].index = i;
-      this.accordionTriggers[i].addEventListener('click', this.clickListener, false);
-      this.accordionTriggers[i].addEventListener('keydown', this.keydownListener, false);
-
-      if (this.accordionTriggers[i].classList.contains('is-selected')) {
-        this.selectedTab = i;
-      }
-    }
-
-    if (!isNaN(this.options.selectedTab)) {
-      this.selectedTab = this.options.selectedTab < this.tabTriggersLength ? this.options.selectedTab : this.tabTriggersLength - 1;
-    }
-
     this.el.classList.add('is-initialized');
-    if (this.options.tabsAllowed) {
-      this.el.classList.add('tabs-allowed');
-    }
+    this._syncMode();
+    if (!this.isAccordion || !this.options.startCollapsed) this.selectTab(this.selectedTab);
+    if (this.options.tabsAllowed) this.media.addEventListener('change', this.modeListener);
+  }
 
-    // If the accordion should not start collapsed, open the first element
-    if(!this.options.startCollapsed || !this.isAccordion){
-      this.selectTab(this.selectedTab, false);
-    }
-
-    var resizeTabs = this._debounce(function() {
-      // This gets delayed for performance reasons
-      if(window.innerWidth >= _this.options.breakpoint && _this.options.tabsAllowed) {
-        _this.isAccordion = false;
-        if (_this.options.tabsAllowed) {
-          _this.el.classList.add('tabs-allowed');
-        }
-        _this.selectTab(_this.selectedTab);
-      } else {
-        _this.isAccordion = true;
-        _this.el.classList.remove('tabs-allowed');
-        if(!_this.options.startCollapsed){
-          _this.selectTab(_this.selectedTab);
-        }
+  AccordionTabs.prototype._syncMode = function () {
+    this.el.classList.toggle('tabs-allowed', !this.isAccordion);
+    this.tabPanels.forEach((panel, i) => {
+      if (this.managedRole[i]) {
+        panel.setAttribute('role', this.isAccordion ? 'group' : 'tabpanel');
       }
-
-    }, 50);
-
-    window.addEventListener('resize', resizeTabs);
-
+    });
   };
 
   AccordionTabs.prototype._clickEvent = function (e) {
-
     e.preventDefault();
-
-    var closestTrigger = this._getClosest(e.target, '.js-tabs-trigger');
-    var closestTab = 0;
-
-    if (closestTrigger == null) {
-      closestTrigger = this._getClosest(e.target, '.js-accordion-trigger');
-      closestTab = this._getClosest(closestTrigger, '.js-tabs-panel');
-      this.isAccordion = true;
-    } else {
-      this.isAccordion = false;
-    }
-
-    var targetIndex = e.target.index != null ? e.target.index : closestTab.index;
-
-    if (targetIndex === this.selectedTab && !this.isAccordion) {
-      return;
-    }
-
-    this.selectTab(targetIndex, true);
+    this.selectTab(e.currentTarget.index, true);
   };
 
   AccordionTabs.prototype._keydownEvent = function (e) {
-
-    var targetIndex;
-
-    if (e.keyCode === this.keys.prev || e.keyCode === this.keys.next || e.keyCode === this.keys.space || e.keyCode === this.keys.enter) {
-      e.preventDefault();
-    }
-    else {
-      return;
-    }
-
-    if (e.keyCode === this.keys.prev && e.target.index > 0 && !this.isAccordion) {
-      targetIndex = e.target.index - 1;
-    }
-    else if (e.keyCode === this.keys.next && e.target.index < this.tabTriggersLength - 1 && !this.isAccordion) {
-      targetIndex = e.target.index + 1;
-    }
-    else if (e.keyCode === this.keys.space || e.keyCode === this.keys.enter) {
-      targetIndex = e.target.index;
-    }
-    else {
-      return;
-    }
-
-    this.selectTab(targetIndex, true);
+    const trigger = e.currentTarget;
+    let index = trigger.index;
+    if (!this.isAccordion && e.key === 'ArrowLeft') index = Math.max(0, index - 1);
+    else if (!this.isAccordion && e.key === 'ArrowRight') index = Math.min(this.tabTriggers.length - 1, index + 1);
+    else if (e.key !== ' ' && e.key !== 'Enter') return;
+    else if (trigger.matches('button') || (trigger.matches('a[href]') && e.key === 'Enter')) return; // Native click.
+    e.preventDefault();
+    this.selectTab(index, true);
   };
 
-  AccordionTabs.prototype._show = function (index, userInvoked) {
-
-    this.tabPanels[index].removeAttribute('tabindex');
-
-    this.tabTriggers[index].removeAttribute('tabindex');
-    this.tabTriggers[index].classList.add('is-selected');
-    this.tabTriggers[index].setAttribute('aria-selected', true);
-
-    this.accordionTriggers[index].setAttribute('aria-expanded', true);
-
-    var panelContent = this.tabPanels[index].getElementsByClassName("content")[0];
-    panelContent.setAttribute('aria-hidden', false);
-    panelContent.classList.remove('is-hidden');
-    panelContent.classList.add('is-open');
-
-    this.tabPanels[index].classList.remove('is-hidden');
-    this.tabPanels[index].classList.add('is-open');
-
-    if (userInvoked) {
-      this.tabTriggers[index].focus();
+  AccordionTabs.prototype._setOpen = function (i, open) {
+    const tab = this.tabTriggers[i];
+    const panel = this.tabPanels[i];
+    tab.classList.toggle('is-selected', open);
+    tab.setAttribute('aria-selected', open);
+    this.accordionTriggers[i].setAttribute('aria-expanded', open);
+    this.contents[i].setAttribute('aria-hidden', !open);
+    for (const element of [panel, this.contents[i]]) {
+      element.classList.toggle('is-open', open);
+      element.classList.toggle('is-hidden', !open);
     }
-  };
-
-  AccordionTabs.prototype._hide = function (index) {
-
-    this.tabTriggers[index].classList.remove('is-selected');
-    this.tabTriggers[index].setAttribute('aria-selected', false);
-    this.tabTriggers[index].setAttribute('tabindex', -1);
-
-    this.accordionTriggers[index].setAttribute('aria-expanded', false);
-
-    var panelContent = this.tabPanels[index].getElementsByClassName("content")[0];
-    panelContent.setAttribute('aria-hidden', true);
-    panelContent.classList.remove('is-open');
-    panelContent.classList.add('is-hidden');
-
-    this.tabPanels[index].classList.remove('is-open');
-    this.tabPanels[index].classList.add('is-hidden');
-    this.tabPanels[index].setAttribute('tabindex', -1);
+    if (open) {
+      tab.removeAttribute('tabindex');
+      panel.removeAttribute('tabindex');
+    } else {
+      tab.setAttribute('tabindex', '-1');
+      panel.setAttribute('tabindex', '-1');
+    }
   };
 
   AccordionTabs.prototype.selectTab = function (index, userInvoked) {
-
-    if (index === null) {
-      if(this.isAccordion) {
-        return;
-      } else {
-        index = 0;
-      }
-    }
-
-    if(!this.tabPanels[index].classList.contains('is-hidden') && userInvoked) {
-
-      if (index === this.selectedTab) {
-        this.selectedTab = null;
-      } else {
-        this.selectedTab = null;
-        this.prevSelectedTab = index;
-      }
-
-      this._hide(index);
-
+    if (index === null && !this.isAccordion) index = 0;
+    if (!this.modeListener) return;
+    if (!Number.isInteger(index) || index < 0 || index >= this.tabPanels.length) return;
+    if (this.isAccordion && userInvoked && this.tabPanels[index].classList.contains('is-open')) {
+      this._setOpen(index, false);
+      this.selectedTab = null;
       return;
     }
-
-    if (this.isAccordion) {
-
-      this.prevSelectedTab = this.selectedTab;
-      this.selectedTab = index;
-
-    } else {
-      if (this.prevSelectedTab === null || !this.isAccordion) {
-        for (var i = 0; i < this.tabTriggersLength; i++) {
-          if (i !== index) {
-            this._hide(i);
-          }
-        }
+    if (!this.isAccordion) {
+      for (const i of this.tabPanels.keys()) {
+        if (i !== index) this._setOpen(i, false);
       }
-      else {
-        this._hide(this.selectedTab);
-      }
-
-      this.prevSelectedTab = this.selectedTab;
-      this.selectedTab = index;
     }
-
-    this._show(this.selectedTab, userInvoked);
-
+    this.selectedTab = index;
+    this._setOpen(index, true);
+    if (userInvoked) (this.isAccordion ? this.accordionTriggers : this.tabTriggers)[index].focus();
   };
 
   AccordionTabs.prototype.destroy = function () {
-
-    for (var i = 0; i < this.tabTriggersLength; i++) {
-      this.tabTriggers[i].classList.remove('is-selected');
-      this.tabTriggers[i].removeAttribute('aria-selected');
-      this.tabTriggers[i].removeAttribute('tabindex');
-
-      this.tabPanels[i].classList.remove('is-hidden');
-      this.tabPanels[i].removeAttribute('aria-hidden');
-      this.tabPanels[i].removeAttribute('tabindex');
-
-      this.tabTriggers[i].removeEventListener('click', this.clickListener, false);
-      this.tabTriggers[i].removeEventListener('keydown', this.keydownListener, false);
-
-      delete this.tabTriggers[i].index;
-    }
-
-    this.el.classList.remove('is-initialized');
-  };
-
-  /**
-    * Get the closest matching element up the DOM tree.
-    * @private
-    * @param  {Element} elem     Starting element
-    * @param  {String}  selector Selector to match against
-    * @return {Boolean|Element}  Returns null if not match found
-    */
-  AccordionTabs.prototype._getClosest = function ( elem, selector ) {
-
-    // Element.matches() polyfill
-    if (!Element.prototype.matches) {
-        Element.prototype.matches =
-            Element.prototype.matchesSelector ||
-            Element.prototype.mozMatchesSelector ||
-            Element.prototype.msMatchesSelector ||
-            Element.prototype.oMatchesSelector ||
-            Element.prototype.webkitMatchesSelector ||
-            function(s) {
-                var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-                    i = matches.length;
-                while (--i >= 0 && matches.item(i) !== this) {}
-                return i > -1;
-            };
-    }
-
-    // Get closest match
-    for ( ; elem && elem !== document; elem = elem.parentNode ) {
-        if ( elem.matches( selector ) ) return elem;
-    }
-
-    return null;
-
-  };
-
-  // Pass in the objects to merge as arguments.
-  // For a deep extend, set the first argument to `true`.
-  AccordionTabs.prototype._extend = function () {
-
-      // Variables
-      var extended = {};
-      var deep = false;
-      var i = 0;
-      var length = arguments.length;
-
-      // Check if a deep merge
-      if ( Object.prototype.toString.call( arguments[0] ) === '[object Boolean]' ) {
-          deep = arguments[0];
-          i++;
+    if (!this.modeListener) return;
+    this.media.removeEventListener('change', this.modeListener);
+    this.modeListener = null;
+    this.tabTriggers.forEach((tab, i) => {
+      const panel = this.tabPanels[i];
+      const accordion = this.accordionTriggers[i];
+      for (const trigger of [tab, accordion]) {
+        trigger.removeEventListener('click', this.clickListener);
+        trigger.removeEventListener('keydown', this.keydownListener);
+        delete trigger.index;
       }
-
-      // Merge the object into the extended object
-      var merge = function (obj) {
-          for ( var prop in obj ) {
-              if ( Object.prototype.hasOwnProperty.call( obj, prop ) ) {
-                  // If deep merge and property is an object, merge properties
-                  if ( deep && Object.prototype.toString.call(obj[prop]) === '[object Object]' ) {
-                      extended[prop] = extend( true, extended[prop], obj[prop] );
-                  } else {
-                      extended[prop] = obj[prop];
-                  }
-              }
-          }
-      };
-
-      // Loop through each object and conduct a merge
-      for ( ; i < length; i++ ) {
-          var obj = arguments[i];
-          merge(obj);
-      }
-
-      return extended;
-
-  };
-
-  // Returns a function, that, as long as it continues to be invoked, will not
-  // be triggered. The function will be called after it stops being called for
-  // N milliseconds. If `immediate` is passed, trigger the function on the
-  // leading edge, instead of the trailing.
-  AccordionTabs.prototype._debounce = function (func, wait, immediate) {
-    var timeout;
-    return function() {
-      var context = this, args = arguments;
-      var later = function() {
-        timeout = null;
-        if (!immediate) { func.apply(context, args); };
-      };
-      var callNow = immediate && !timeout;
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-      if (callNow) { func.apply(context, args) };
-    };
-  };
-
-  var slice = Array.prototype.slice;
-
-  function $(expr, con) {
-    return typeof expr === "string" ? (con || document).querySelector(expr) : expr || null;
-  }
-
-  function $$(expr, con) {
-    return slice.call((con || document).querySelectorAll(expr));
-  }
-
-  // Initialization
-
-  function init() {
-    $$(".js-tabs").forEach(function (input) {
-      new AccordionTabs(input);
+      tab.classList.remove('is-selected');
+      tab.removeAttribute('aria-selected');
+      tab.removeAttribute('tabindex');
+      accordion.removeAttribute('aria-expanded');
+      if (this.needsButtonRole[i]) accordion.removeAttribute('role');
+      panel.removeAttribute('tabindex');
+      if (this.managedRole[i]) panel.removeAttribute('role');
+      panel.classList.remove('is-open', 'is-hidden');
+      this.contents[i].classList.remove('is-open', 'is-hidden');
+      this.contents[i].removeAttribute('aria-hidden');
     });
+    this.el.classList.remove('is-initialized', 'tabs-allowed');
+  };
+
+  function init () {
+    document.querySelectorAll('.js-tabs').forEach(el => { new AccordionTabs(el); });
   }
 
-  // Are we in a browser? Check for Document constructor
-  if (typeof Document !== "undefined") {
-    // DOM already loaded?
-    if (document.readyState !== "loading") {
-      init();
-    }
-    else {
-      // Wait for it
-      document.addEventListener("DOMContentLoaded", init);
-    }
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
   }
-
-  // Export on self when in a browser
-  if (typeof self !== "undefined") {
-    self.AccordionTabs = AccordionTabs;
-  }
-
-  // Expose as a CJS module
-  if (typeof module === "object" && module.exports) {
-    module.exports = AccordionTabs;
-  }
-
-  return AccordionTabs;
-
+  if (typeof self !== 'undefined') self.AccordionTabs = AccordionTabs;
+  if (typeof module === 'object' && module.exports) module.exports = AccordionTabs;
 })();

@@ -1,6 +1,6 @@
 # a11y-accordion-tabs
 
-[![npm version](https://badge.fury.io/js/a11y-accordion-tabs.svg)](https://badge.fury.io/js/a11y-accordion-tabs) [![Build Status](https://travis-ci.org/matthiasott/a11y-accordion-tabs.svg?branch=master)](https://travis-ci.org/matthiasott/a11y-accordion-tabs) [![devDependency Status](https://david-dm.org/matthiasott/a11y-accordion-tabs.svg)](https://david-dm.org/matthiasott/a11y-accordion-tabs#info=devDependencies)
+[![npm version](https://badge.fury.io/js/a11y-accordion-tabs.svg)](https://badge.fury.io/js/a11y-accordion-tabs)
 
 A small script (less than 1.6 KB compressed and gzipped) with zero dependencies for creating accessible accordion tabs components.
 Based on the [accessible tabs component by @stowball](https://codepen.io/stowball/pen/xVWwWe).
@@ -20,7 +20,7 @@ Download the [latest](https://github.com/matthiasott/a11y-accordion-tabs/archive
 ### npm
 
 ```sh
-npm install a11y-accordion-tabs --save-dev
+npm install a11y-accordion-tabs
 ```
 
 ## Usage
@@ -41,41 +41,42 @@ The basic HTML structure for the accordion tabs component reads as follows:
 
 ```html
 <div class="accordion-tabs js-tabs">
-  <ul role="tablist" class="tabs-tab-list">
+  <ul role="tablist" aria-label="Sections" class="tabs-tab-list">
     <li role="presentation"><a href="#section1" role="tab" id="tab1" aria-controls="section1" aria-selected="true" class="tabs-trigger js-tabs-trigger">Section 1</a></li>
     <li role="presentation"><a href="#section2" role="tab" id="tab2" aria-controls="section2" class="tabs-trigger js-tabs-trigger">Section 2</a></li>
     <li role="presentation"><a href="#section3" role="tab" id="tab3" aria-controls="section3" class="tabs-trigger js-tabs-trigger">Section 3</a></li>
   </ul>
-  <section id="section1" role="tabpanel" aria-labelledby="tab1" class="tabs-panel js-tabs-panel" tabindex="0">
-    <div class="accordion-trigger js-accordion-trigger" aria-controls="section1" aria-expanded="true" tabindex="0">Section 1</div>
-    <div class="content" aria-hidden="false">
+  <section id="section1" aria-labelledby="tab1" class="tabs-panel js-tabs-panel">
+    <button type="button" class="accordion-trigger js-accordion-trigger" aria-controls="content1">Section 1</button>
+    <div class="content" id="content1">
       abc
     </div>
   </section>
-  <section id="section2" role="tabpanel" aria-labelledby="tab2" class="tabs-panel js-tabs-panel">
-    <div class="accordion-trigger js-accordion-trigger" aria-controls="section2" aria-expanded="false" tabindex="0">Section 2</div>
-    <div class="content" aria-hidden="true">
+  <section id="section2" aria-labelledby="tab2" class="tabs-panel js-tabs-panel">
+    <button type="button" class="accordion-trigger js-accordion-trigger" aria-controls="content2">Section 2</button>
+    <div class="content" id="content2">
       def
     </div>
   </section>
-  <section id="section3" role="tabpanel" aria-labelledby="tab3" class="tabs-panel js-tabs-panel">
-    <div class="accordion-trigger js-accordion-trigger" aria-controls="section3" aria-expanded="false" tabindex="0">Section 3</div>
-    <div class="content" aria-hidden="true">
+  <section id="section3" aria-labelledby="tab3" class="tabs-panel js-tabs-panel">
+    <button type="button" class="accordion-trigger js-accordion-trigger" aria-controls="content3">Section 3</button>
+    <div class="content" id="content3">
       def
     </div>
   </section>
 </div>
 ```
 
+Keep one tab, one disclosure button and one `.content` per panel, in matching order. IDs must be unique across the page. Leave content visible in the HTML: the script sets expanded, selected and hidden states on initialization. With the supplied stylesheet, the controls appear only after initialization, so all content remains readable if the script fails to load.
+
 For an advanced version [have a look at the demo](https://matthiasott.github.io/a11y-accordion-tabs/).
 
 By default, the script looks for all elements with the class `js-tabs` and turns them into an accordion tabs component automatically.
-But you can also instantiate the component in your JavaScript like this:
+For manual initialization, **omit `js-tabs` from the root** so it is not initialized twice. Keep the other hook classes:
 
 ```javascript
-var tabs = document.getElementById("myTabs");
-
-new AccordionTabs(tabs);
+const tabs = document.getElementById('myTabs');
+const instance = new AccordionTabs(tabs);
 ```
 
 ## Options
@@ -91,15 +92,29 @@ new AccordionTabs(tabs, {
 });
 ```
 
-| **tabsAllowed** | Boolean | `true` | If `tabsAllowed` is set to `false`, the component always stays an accordion |
-| **breakpoint** | Number | `640` | Defines the min-width breakpoint where the accordion becomes a tabs component. **Make sure to also adjust the CSS accordingly.** |
-| **selectedTab** | Number | `0` | Sets the tab that is selected on init |
-| **startCollapsed** | Boolean | `false` | Defines if the accordion should be collapsed on startup |
+| Constructor option | HTML attribute | Default | Behavior |
+| --- | --- | --- | --- |
+| `tabsAllowed` | `data-tabs-allowed` | `true` | Set to `false` to stay in accordion mode at every width. |
+| `breakpoint` | `data-breakpoint` | `640` | Minimum viewport width in CSS pixels for tabs. The option only changes JavaScript. Update the matching `@media (min-width: 640px)` in your stylesheet too. |
+| `selectedTab` | `data-selected-tab` | `0` | Zero-based index of the initially open panel (bounded to the available panels). |
+| `startCollapsed` | `data-start-collapsed` | `false` | Start with no open panel **in accordion mode only**. Tabs always start with one selected panel, the first by default. |
+
+Data attributes take precedence over constructor options. Write boolean attributes as `"true"` or `"false"`.
+
+## Instance methods
+
+- `instance.selectTab(index)` opens a panel without moving focus. In tabs mode only that panel stays open; in accordion mode other open panels stay open. An optional second argument of `true` treats the selection as user activation (including toggling an open disclosure).
+- `instance.destroy()` removes input and breakpoint listeners and clears the enhanced state. With the supplied stylesheet the content returns to its readable, non-interactive layout. Create a new instance to re-enable it.
+
+The component emits no custom events.
 
 ## Compatibility
 
-The functions in the script are supported by all modern browsers, including IE10+.
-If you need support for IE9, you might want to use [this polyfill](https://github.com/eligrey/classList.js) for `element.classList`.
+New browser code targets [Baseline Widely available](https://web.dev/baseline): features interoperable across the core browsers for at least 30 months. Internet Explorer is no longer supported. Browser tests use Playwright's installed Chromium; that is not a compatibility test of every Baseline browser.
+
+The accessibility target for new work is WCAG 2.2 AA. The browser suite exercises keyboard operation and runs axe; neither replaces testing with assistive technology.
+
+For development use Node 22.12+ (Mocha itself also supports 20.19+, but the locked toolchain includes a Node 22+ transitive dependency). Node is not required to run the browser script.
 
 ## Changelog
 

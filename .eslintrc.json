@@ -1,0 +1,11 @@
+{
+  "root": true,
+  "extends": "semistandard",
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "no-new": "off"
+  }
+}

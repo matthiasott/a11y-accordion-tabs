@@ -3,6 +3,11 @@
   "version": "1.0.2",
   "description": "A script for an accessible accordion tabs component",
   "main": "a11y-accordion-tabs",
+  "files": [
+    "a11y-accordion-tabs.js",
+    "a11y-accordion-tabs.min.js",
+    "docs/"
+  ],
   "keywords": [
     "accordion",
     "tabs",
@@ -23,16 +28,29 @@
   "scripts": {
     "copy": "cp a11y-accordion-tabs.js docs/main.js",
     "minify": "uglifyjs a11y-accordion-tabs.js -o a11y-accordion-tabs.min.js -c -m",
-    "sass": "node-sass --output-style expanded docs/styles.scss docs/styles.css",
-    "watch:sass": "node-sass --watch docs/styles.scss --output-style expanded docs/styles.css",
+    "sass": "sass --style=expanded --no-source-map docs/styles.scss docs/styles.css",
+    "watch:sass": "sass --watch --style=expanded --no-source-map docs/styles.scss docs/styles.css",
     "build": "npm run minify && npm run sass && npm run copy",
     "predeploy": "npm run build",
-    "lint": "semistandard a11y-accordion-tabs.js",
-    "test": "make test"
+    "lint": "eslint a11y-accordion-tabs.js test/",
+    "test": "make test",
+    "setup:browser": "playwright install chromium",
+    "test:browser": "mocha --timeout 30000 --reporter spec test/browser.test.js",
+    "test:package": "node test/package-smoke.js",
+    "test:all": "npm test && npm run test:browser && npm run test:package"
+  },
+  "overrides": {
+    "glob": "^14.0.6",
+    "minimatch": "^11.0.9",
+    "picomatch": "^4.0.7"
   },
   "devDependencies": {
-    "mocha": "^5.2.0",
-    "node-sass": "^7.0.0",
-    "uglify-js": "^3.9.3"
+    "axe-core": "^4.14.1",
+    "eslint": "^8.57.1",
+    "mocha": "^12.0.3",
+    "playwright": "^1.65.1",
+    "sass": "^1.108.2",
+    "semistandard": "^17.0.0",
+    "uglify-js": "^3.19.3"
   }
 }

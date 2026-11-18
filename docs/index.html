@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>A11y Accordion Tabs Component</title>
 
@@ -14,14 +13,12 @@
     <meta name="twitter:description" content="An accessible UI component for the Web." />
     <meta name="twitter:image" content="https://matthiasott.github.io/a11y-accordion-tabs/a11y-accordion-tabs-twimg.jpg" />
 
-    <link rel="stylesheet" href="https://unpkg.com/tachyons@4.8.0/css/tachyons.min.css"/>
     <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-twilight.css" />
   </head>
 
   <body>
   <header class="header">
-    <svg class="logo" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="160px" height="80px" viewBox="0 0 512 260"><path fill="#DE0840" d="M129.347 0H0v146.875h172.464V0"/><path fill="#FFF" fill-opacity="0.35" d="M86.23 164.168H0v40.8h172.464v-40.8h-43.116M86.23 219.247H0v40.798h172.464v-40.798h-43.116"/><path fill="#DE0840" d="M468.694 56.053H210v203.993H511.81V56.053M210 0v40.798h86.231V0h-43.114"/><path fill="#FFF" fill-opacity="0.35" d="M317.98 0v40.798h86.231V0h-43.115M468.884 0H425.77v40.798H512V0"/></svg>
+    <svg class="logo" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="160px" height="80px" viewBox="0 0 512 260"><path fill="#DE0840" d="M129.347 0H0v146.875h172.464V0"/><path fill="#FFF" fill-opacity="0.35" d="M86.23 164.168H0v40.8h172.464v-40.8h-43.116M86.23 219.247H0v40.798h172.464v-40.798h-43.116"/><path fill="#DE0840" d="M468.694 56.053H210v203.993H511.81V56.053M210 0v40.798h86.231V0h-43.114"/><path fill="#FFF" fill-opacity="0.35" d="M317.98 0v40.798h86.231V0h-43.115M468.884 0H425.77v40.798H512V0"/></svg>
     <h1>A11y Accordion Tabs</h1>
     <p>An accessible UI component for the Web.</p>
 
@@ -31,39 +28,39 @@
   </header>
   <main class="main">
     <section class="accordion-tabs js-tabs" data-tabs-allowed="true" data-breakpoint="640" data-start-collapsed="true">
-      <ul role="tablist" class="tabs-tab-list">
+      <ul role="tablist" aria-label="Demo sections" class="tabs-tab-list">
           <li role="presentation"><a id="tab1" href="#section1" role="tab" aria-controls="section1" aria-selected="true" class="tabs-trigger js-tabs-trigger">Section 1</a></li>
           <li role="presentation"><a id="tab2" href="#section2" role="tab" aria-controls="section2" class="tabs-trigger js-tabs-trigger">Section 2</a></li>
           <li role="presentation"><a id="tab3" href="#section3" role="tab" aria-controls="section3" class="tabs-trigger js-tabs-trigger">Section 3</a></li>
       </ul>
-      <section id="section1" role="tabpanel" aria-labelledby="tab1" class="tabs-panel js-tabs-panel" tabindex="0">
-        <div class="accordion-trigger js-accordion-trigger" aria-controls="section1" aria-expanded="true" tabindex="0">Section 1 <div class="accordion-trigger-icon"><span class="label--open">Open</span><span class="label--close">Close</span>
+      <section id="section1" aria-labelledby="tab1" class="tabs-panel js-tabs-panel">
+        <button type="button" class="accordion-trigger js-accordion-trigger" aria-controls="content1">Section 1 <span class="accordion-trigger-icon">
           <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20">
             <rect class="vert" height="18" width="2" fill="currentColor" y="1" x="9"></rect>
             <rect height="2" width="18" fill="currentColor" y="9" x="1"></rect>
           </svg>
-        </div></div>
-        <div class="content" aria-hidden="false">
+        </span></button>
+        <div class="content" id="content1">
           <h2>Headline Section 1</h2>
           <p>Cum prefrontal cortex horribilem walking fornix dead resurgere brains de crazed limbic cortex optic nerve sepulcris creaturis, braaaaaiins zombie sicut hypothalamus de <a href="#">grave hippocampus feeding</a> iride brainz et serpens. Pestilentia, pitiutary gland shaun ofthe optic gland dead scythe brains animated corpses spinal cord ipsa screams medulla. Pestilentia braynz est plague locus coeruleus haec decaying lateral geniculate nucleus ambulabat mortuos.</p>
         </div>
       </section>
-      <section id="section2" role="tabpanel" aria-labelledby="tab2" class="tabs-panel js-tabs-panel">
-        <div class="accordion-trigger js-accordion-trigger" aria-controls="section2" aria-expanded="false" tabindex="0">Section 2 <div class="accordion-trigger-icon"><span class="label--open">Open</span><span class="label--close">Close</span><svg aria-hidden="true" focusable="false" viewBox="0 0 20 20">
+      <section id="section2" aria-labelledby="tab2" class="tabs-panel js-tabs-panel">
+        <button type="button" class="accordion-trigger js-accordion-trigger" aria-controls="content2">Section 2 <span class="accordion-trigger-icon"><svg aria-hidden="true" focusable="false" viewBox="0 0 20 20">
             <rect class="vert" height="18" width="2" fill="currentColor" y="1" x="9"></rect>
             <rect height="2" width="18" fill="currentColor" y="9" x="1"></rect>
-          </svg></div></div>
-        <div class="content" aria-hidden="true">
+          </svg></span></button>
+        <div class="content" id="content2">
           <h2>Headline Section 2</h2>
           <p>Zombie ipsum brains reversus ab cerebellum viral inferno, brein nam rick mend grimes malum cerveau cerebro. De carne cerebro lumbering animata cervello corpora quaeritis. Summus thalamus brains sit​​, morbo basal ganglia vel maleficia? De braaaiiiins apocalypsi gorger omero prefrontal cortex <a href="#">undead survivor</a> fornix dictum mauris. Hi brains mindless mortuis limbic cortex soulless creaturas optic nerve, imo evil braaiinns stalking monstra hypothalamus adventus resi hippocampus dentevil.</p>
         </div>
       </section>
-      <section id="section3" role="tabpanel" aria-labelledby="tab3" class="tabs-panel js-tabs-panel">
-        <div class="accordion-trigger js-accordion-trigger" aria-controls="section3" aria-expanded="false" tabindex="0">Section 3 <div class="accordion-trigger-icon"><span class="label--open">Open</span><span class="label--close">Close</span><svg aria-hidden="true" focusable="false" viewBox="0 0 20 20">
+      <section id="section3" aria-labelledby="tab3" class="tabs-panel js-tabs-panel">
+        <button type="button" class="accordion-trigger js-accordion-trigger" aria-controls="content3">Section 3 <span class="accordion-trigger-icon"><svg aria-hidden="true" focusable="false" viewBox="0 0 20 20">
             <rect class="vert" height="18" width="2" fill="currentColor" y="1" x="9"></rect>
             <rect height="2" width="18" fill="currentColor" y="9" x="1"></rect>
-          </svg></div></div>
-        <div class="content" aria-hidden="true">
+          </svg></span></button>
+        <div class="content" id="content3">
           <h2>Headline Section 3</h2>
           <p>Zombie ipsum reversus ab viral inferno, nam rick grimes malum cerebro. De <a href="#">carne lumbering animata</a> corpora quaeritis. Summus brains sit​​, morbo vel maleficia? De apocalypsi gorger omero undead survivor dictum mauris. Hi mindless mortuis soulless creaturas, imo evil stalking monstra adventus resi dentevil vultus comedat cerebella viventium. Qui animated corpse, cricket bat max brucks terribilem incessu zomby. The voodoo sacerdos flesh eater, suscitat mortuos comedere carnem virus. </p>
         </div>
@@ -79,7 +76,6 @@
   </div>
   <p>© Copyright 2017 <a href="https://matthiasott.com">Matthias Ott</a></p>
 </footer>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.4.1/prism.min.js"></script>
   <script src="main.js"></script>
   </body>
 </html>
