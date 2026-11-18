@@ -17,7 +17,7 @@ This README describes the upcoming 2.0 release. Upgrading from 1.x? See the [mig
 
 ### Download or clone
 
-Download the [latest](https://github.com/matthiasott/a11y-accordion-tabs/archive/master.zip) version or `git clone https://github.com/matthiasott/a11y-accordion-tabs.git`.
+Download a tagged version from [GitHub Releases](https://github.com/matthiasott/a11y-accordion-tabs/releases), or clone the repository for the development version.
 
 ### npm
 
@@ -33,10 +33,21 @@ First, include `a11y-accordion-tabs.js` (or the minified version) in your docume
 <script src="a11y-accordion-tabs.js" async></script>
 ```
 
-You can write your own styles from scratch or use [the CSS file in the docs folder](https://raw.githubusercontent.com/matthiasott/a11y-accordion-tabs/master/docs/styles.css) as a starting point and include it in your document, too.
+Use your own styles or copy the component rules from [docs/styles.css](docs/styles.css) in the same release. This is the demo stylesheet: it also styles the page body, links and headings. If you copy it to `styles.css`, link it like this:
 
 ```html
 <link rel="stylesheet" href="styles.css" />
+```
+
+The stylesheet exposes `--aat-*` color and typography properties. Override them on a root to theme just that set and its descendants. For example:
+
+```css
+.accordion-tabs.product-details {
+  --aat-color-surface: rgb(250 248 244);
+  --aat-color-text: rgb(36 34 30);
+  --aat-color-accent: rgb(144 51 66);
+  --aat-font-family-body: Georgia, serif;
+}
 ```
 
 The basic HTML structure for the accordion tabs component reads as follows:
@@ -71,9 +82,16 @@ The basic HTML structure for the accordion tabs component reads as follows:
 
 Keep one tab, one disclosure button and one `.content` per panel, in matching order. IDs must be unique across the page. Leave content visible in the HTML: the script sets expanded, selected and hidden states on initialization. With the supplied stylesheet, the controls appear only after initialization, so all content remains readable if the script fails to load.
 
-For an advanced version [have a look at the demo](https://matthiasott.github.io/a11y-accordion-tabs/).
+### Nested tab sets
+
+To nest a set, place a **complete** `.accordion-tabs.js-tabs` component inside a parent panel’s `.content`. A second tablist alone is not a separate instance. Give each tablist a distinct accessible name and use page-unique IDs for its tabs, panels and disclosure content. Each set has its own selection and options: for example, the parent can show tabs while the child uses `data-tabs-allowed="false"` to stay an accordion. Closing and reopening the parent preserves the child’s selection.
+
+When initializing nested sets manually, keep `.accordion-tabs` on each root, omit `.js-tabs`, and construct parents before children. Use the updated stylesheet or scope your own mode styles to each root; broad selectors such as `.tabs-allowed .accordion-trigger` also match controls in a nested accordion.
 
 By default, the script looks for all elements with the class `js-tabs` and turns them into an accordion tabs component automatically.
+
+### Manual initialization
+
 For manual initialization, **omit `js-tabs` from the root** so it is not initialized twice. Keep the other hook classes:
 
 ```javascript
@@ -108,7 +126,7 @@ Data attributes take precedence over constructor options. Write boolean attribut
 
 Add `data-deep-link="true"` to the `.js-tabs` root (or pass `{ deepLink: true }` to the constructor). With the markup above, `#section2` opens the panel whose `id` is `section2`, not the tab whose `id` is `tab2`. Use a stable, page-unique panel ID so shared links keep working if panels are reordered.
 
-On load, a matching fragment overrides `selectedTab` and `startCollapsed`. Following a fragment link or using Back/Forward reveals and scrolls to that panel; other components and unrelated fragments are left alone. In accordion mode, following a link opens the panel without closing others.
+On load, a matching fragment overrides `selectedTab` and `startCollapsed`. Following a fragment link or using Back/Forward reveals and scrolls to that panel; other components and unrelated fragments are left alone. In accordion mode, following a link opens the panel without closing others. For a nested destination, enable deep links on the child set. Its enclosing panels open as needed, even if the parent does not write its own links.
 
 Activating a trigger by pointer or keyboard updates the fragment without jumping to the panel or adding a history entry. Closing a disclosure clears the fragment only if it names that disclosure's panel. Resizing and calls to `selectTab()` do not change the URL.
 
@@ -133,7 +151,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the release history and notes on upgrading 
 
 ## License 
 
-Code released under [the MIT license](https://github.com/matthiasott/a11y-accordion-tabs/LICENSE).
+Code released under [the MIT license](LICENSE).
 
 ## Author
 

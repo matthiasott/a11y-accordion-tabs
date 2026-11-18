@@ -7,8 +7,14 @@
 - **Breaking: Internet Explorer is no longer supported.** The browser scripts now target [Baseline Widely available](https://web.dev/baseline). The `AccordionTabs` browser global, CommonJS entry point, and existing JavaScript and CSS paths are unchanged. There are still no runtime dependencies.
 - If you customize the responsive styles, match your CSS media query to the JavaScript `breakpoint` in CSS pixels. The supplied stylesheet now uses `640px` rather than `40em`, and `.tabs-allowed` indicates that tabs mode is active.
 - If you call `selectTab()` directly, pass a zero-based integer such as `selectTab(1)`. Numeric strings such as `"1"` are ignored.
+- If you copied the 1.x HTML, remove static `aria-hidden="true"` from `.content`. JavaScript now manages the hidden state; without it, every panel should remain readable. The recommended disclosure is a `<button type="button">`, but the old focusable `div` still works.
+- Deep linking is off by default. You do not need to change existing panel IDs or URL handling unless you opt in.
 
 ### Added
+
+- The demo stylesheet exposes `--aat-*` CSS custom properties for colors and typography, so a tab set can be themed without replacing its selectors.
+
+- Nested accordion/tab sets ([#6](https://github.com/matthiasott/a11y-accordion-tabs/issues/6)): a complete child component inside a panel keeps independent keyboard navigation, selection and responsive mode. A deep link to a child panel reveals its enclosing panels first.
 
 - Opt-in deep links: set `data-deep-link="true"` on a component or pass `{ deepLink: true }`. A fragment such as `#section2` reveals the panel with that ID, even in an initially collapsed accordion. Pointer and keyboard activation update the fragment without adding a history entry. Following a fragment link or using Back/Forward reveals the matching panel without changing other components.
 
@@ -16,12 +22,12 @@
 
 - Clicking an icon, span, or other child of a tab or disclosure trigger now activates the correct panel instead of throwing a `TypeError` ([#25](https://github.com/matthiasott/a11y-accordion-tabs/issues/25)).
 - Enter and Space no longer collapse the selected tab and leave every panel hidden. Tabs always show one panel: the first by default, or the configured `selectedTab`. `startCollapsed` applies only to accordion mode.
-- The demo and recommended markup use native disclosure buttons and expose all panel content when JavaScript is unavailable. If you copied the old markup, remove static `aria-hidden="true"` from `.content` to get the same fallback. Existing focusable `div` triggers still work with JavaScript.
+- The demo exposes all panel content when JavaScript is unavailable and uses named, native disclosure buttons when enhanced.
 - `destroy()` now detaches input and navigation listeners and clears hidden panel state. An incomplete component no longer prevents subsequent components from initializing.
 
 ### Packaging and development
 
-- The npm package ships the library and demo assets without repository tooling or tests. For development, use Node 22.12 or newer. The build uses Dart Sass instead of Node Sass; regression checks cover keyboard interaction, axe accessibility checks, and installation from the packed tarball.
+- The npm package ships the library, demo assets and upgrade notes without repository tooling or tests. For development, use Node 22.12 or newer. The build uses Dart Sass instead of Node Sass; regression checks cover keyboard interaction, axe accessibility checks, and installation from the packed tarball.
 
 ## 1.0.2 — 2020-09-09
 
