@@ -4,6 +4,7 @@
   "description": "A script for an accessible accordion tabs component",
   "main": "a11y-accordion-tabs",
   "files": [
+    "CHANGELOG.md",
     "a11y-accordion-tabs.js",
     "a11y-accordion-tabs.min.js",
     "docs/"

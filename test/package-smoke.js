@@ -27,6 +27,7 @@ const installed = path.join(consumer, 'node_modules', 'a11y-accordion-tabs');
 const requiredFiles = [
   'package.json',
   'README.md',
+  'CHANGELOG.md',
   'LICENSE',
   'a11y-accordion-tabs.js',
   'a11y-accordion-tabs.min.js',
