@@ -5,6 +5,9 @@
 (function () {
   'use strict';
 
+  const panelOwners = new WeakMap();
+  const rootSelector = '.js-tabs, .accordion-tabs';
+
   function readOptions (data, options) {
     const settings = { breakpoint: 640, tabsAllowed: true, selectedTab: 0, startCollapsed: false, deepLink: false, ...options };
     for (const key of ['tabsAllowed', 'startCollapsed', 'deepLink']) {
@@ -27,12 +30,17 @@
   function AccordionTabs (el, options) {
     if (!el) return;
     this.el = el;
-    this.tabTriggers = Array.from(el.getElementsByClassName('js-tabs-trigger'));
-    this.tabPanels = Array.from(el.getElementsByClassName('js-tabs-panel'));
-    this.accordionTriggers = Array.from(el.getElementsByClassName('js-accordion-trigger'));
-    this.contents = this.tabPanels.map(panel => panel.querySelector('.content'));
+    // Compare nearest roots rather than requiring a particular wrapper depth.
+    // Both may be null for a standalone, manually initialized element.
+    const boundary = el.closest(rootSelector);
+    const owns = node => node.closest(rootSelector) === boundary;
+    const owned = selector => Array.from(el.querySelectorAll(selector)).filter(owns);
+    this.tabTriggers = owned('.js-tabs-trigger');
+    this.tabPanels = owned('.js-tabs-panel');
+    this.accordionTriggers = owned('.js-accordion-trigger');
+    this.contents = this.tabPanels.map(panel => Array.from(panel.querySelectorAll('.content')).find(owns));
     const count = this.tabTriggers.length;
-    if (!count || count !== this.tabPanels.length || count !== this.accordionTriggers.length || this.contents.includes(null)) return;
+    if (!count || count !== this.tabPanels.length || count !== this.accordionTriggers.length || this.contents.includes(undefined)) return;
 
     this.options = readOptions(el.dataset, options);
     const index = Number(this.options.selectedTab);
@@ -51,6 +59,7 @@
         trigger.addEventListener('click', this.clickListener);
         trigger.addEventListener('keydown', this.keydownListener);
       }
+      panelOwners.set(this.tabPanels[i], this);
       // Support the focusable div in earlier versions of the markup.
       if (this.needsButtonRole[i]) accordion.setAttribute('role', 'button');
       this._setOpen(i, false);
@@ -85,6 +94,11 @@
     const id = fragmentId();
     const index = id ? this.tabPanels.findIndex(panel => panel.id === id) : -1;
     if (index === -1) return false;
+    // Reveal enclosing panels without toggling them, moving focus or rewriting the hash.
+    for (let panel = this.el.closest('.js-tabs-panel'); panel; panel = panel.parentElement?.closest('.js-tabs-panel')) {
+      const owner = panelOwners.get(panel);
+      if (owner) owner.selectTab(owner.tabPanels.indexOf(panel));
+    }
     this.selectTab(index);
     // Native fragment scrolling may already have skipped this then-hidden panel.
     this.tabPanels[index].scrollIntoView();
@@ -177,6 +191,7 @@
       tab.removeAttribute('tabindex');
       accordion.removeAttribute('aria-expanded');
       if (this.needsButtonRole[i]) accordion.removeAttribute('role');
+      panelOwners.delete(panel);
       panel.removeAttribute('tabindex');
       if (this.managedRole[i]) panel.removeAttribute('role');
       panel.classList.remove('is-open', 'is-hidden');

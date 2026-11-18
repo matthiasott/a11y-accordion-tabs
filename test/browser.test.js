@@ -105,6 +105,83 @@ describe('a11y-accordion-tabs browser regression suite', function () {
     if (browser) await browser.close();
   });
 
+  describe('nested sets', function () {
+    function nested (outer, inner) {
+      return outer.replace('<h2>outer content 2</h2>', heading => heading + inner);
+    }
+
+    it('keeps pointer, arrow-key focus and selection inside the active set', async function () {
+      const child = componentMarkup('inner').replace('<ul ', '<div><ul ').replace('</ul>', '</ul></div>');
+      const { page, context } = await openComponent(browser, nested(componentMarkup('outer'), child));
+      try {
+        await page.locator('#outer-tab2').click();
+        await page.locator('#inner-tab2').click();
+        await page.keyboard.press('ArrowRight');
+        assert.equal(await page.locator('#outer-tab2').getAttribute('aria-selected'), 'true');
+        assert.equal(await page.locator('#inner-tab3').getAttribute('aria-selected'), 'true');
+        assert.equal(await page.evaluate(() => document.activeElement.id), 'inner-tab3');
+        await page.addScriptTag({ path: axePath });
+        const violations = await page.evaluate(async () => (await axe.run(document.querySelector('.js-tabs'), {
+          runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] }
+        })).violations.map(v => v.id));
+        assert.deepEqual(violations, []);
+        await page.locator('#outer-tab3').click();
+        assert.equal(await page.locator('#inner-tab3').isVisible(), false);
+        await page.locator('#outer-tab2').click();
+        assert.equal(await page.locator('#inner-panel3 .content').isVisible(), true);
+      } finally { await context.close(); }
+    });
+
+    it('shows accordion controls inside desktop tabs, including after resize', async function () {
+      const body = nested(componentMarkup('outer', 'data-selected-tab="1"'), componentMarkup('inner', 'data-tabs-allowed="false"'));
+      const { page, context } = await openComponent(browser, body);
+      try {
+        for (const width of [800, 500, 800]) {
+          await page.setViewportSize({ width, height: 900 });
+          await page.waitForFunction(width => document.querySelector('#outer-tab2').checkVisibility() === (width >= 640), width);
+          assert.equal(await page.locator('#inner-tab1').isVisible(), false);
+          const button = page.getByRole('button', { name: 'inner Section 2' });
+          assert.equal(await button.isVisible(), true);
+          await button.press('Space');
+          assert.equal(await page.locator('#inner-panel2 .content').isVisible(), await button.getAttribute('aria-expanded') === 'true');
+        }
+      } finally { await context.close(); }
+    });
+
+    it('reveals the ancestor panels for an incoming child deep link, even without parent opt-in', async function () {
+      const child = componentMarkup('inner', 'data-deep-link="true" data-tabs-allowed="false" data-start-collapsed="true"');
+      const body = nested(componentMarkup('outer'), child);
+      const page = await browser.newPage();
+      try {
+        await page.route('https://fixture.test/nested', route => route.fulfill({ contentType: 'text/html', body: pageShell(body) }));
+        await page.goto('https://fixture.test/nested#inner-panel3');
+        await page.addScriptTag({ path: sourcePath });
+        assert.equal(await page.locator('#outer-tab2').getAttribute('aria-selected'), 'true');
+        assert.equal(await page.locator('#inner-panel3 .content').isVisible(), true);
+        await page.locator('#outer-tab1').click();
+        await page.evaluate(() => { location.hash = 'inner-panel1'; });
+        await page.locator('#inner-panel1 .content').waitFor({ state: 'visible', timeout: 2000 });
+        assert.equal(await page.locator('#inner-panel3 .content').isVisible(), true);
+      } finally { await page.close(); }
+    });
+
+    it('leaves a manual child operable after destroying its parent', async function () {
+      const body = nested(componentMarkup('outer', 'id="outer"', ''), componentMarkup('inner', 'id="inner"', ''));
+      const { page, context } = await openComponent(browser, body);
+      try {
+        await page.evaluate(() => {
+          const outer = new AccordionTabs(document.getElementById('outer'));
+          new AccordionTabs(document.getElementById('inner'), { tabsAllowed: false });
+          outer.destroy();
+        });
+        const button = page.getByRole('button', { name: 'inner Section 2' });
+        assert.equal(await button.isVisible(), true);
+        await button.press('Enter');
+        assert.equal(await button.getAttribute('aria-expanded'), 'true');
+      } finally { await context.close(); }
+    });
+  });
+
   describe('opt-in deep links', function () {
     const url = 'https://fixture.test/demo?lang=en';
     const attrs = 'data-deep-link="true" data-selected-tab="1" data-start-collapsed="true"';
