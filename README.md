@@ -127,36 +127,7 @@ For development use Node 22.12+ (Mocha itself also supports 20.19+, but the lock
 
 ## Changelog
 
-### 0.5.0
-- New option `startCollapsed`: Defines if the accordion should be collapsed on startup
-
-### 0.4.1
-- Fix CJS module export
-– Update dependencies to fix vulnerabilities
-
-### 0.4.0
-- Data attributes now follow the W3C naming conventions (no uppercase letters)
-– Improved default aria-roles in the demo HTML code
-– Plus / minus symbols instead of chevrons in the demo code
-
-### 0.3.2
-- Update documentation
-
-### 0.3.1
-- Cleanup example HTML code
-
-### 0.3.0
-- Add support for multiple instances
-- Update README with basic documentation 
-
-### 0.2.1
-- Breakpoint min-width fix.
-
-### 0.2.0
-- Improved ARIA-roles for the accordion state.
-
-### 0.1.0
-- First basic version. Still a lot of cleanup to do. Please use with caution!
+See [CHANGELOG.md](CHANGELOG.md) for the release history and notes on upgrading to 2.0.
 
 ## License 
 
