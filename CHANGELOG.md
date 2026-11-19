@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0 — Unreleased
+## 2.0.0 — 2026-11-19
 
 ### Upgrading from 1.x
 
@@ -12,7 +12,7 @@
 
 ### Added
 
-- The demo stylesheet exposes `--aat-*` CSS custom properties for colors and typography, so a tab set can be themed without replacing its selectors.
+- The demo stylesheet exposes `--aat-*` CSS custom properties for colors and typography. It now uses the system UI font, respects the browser’s default body text size and scales the title within a bounded range.
 
 - Nested accordion/tab sets ([#6](https://github.com/matthiasott/a11y-accordion-tabs/issues/6)): a complete child component inside a panel keeps independent keyboard navigation, selection and responsive mode. A deep link to a child panel reveals its enclosing panels first.
 

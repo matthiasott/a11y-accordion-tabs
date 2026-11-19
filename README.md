@@ -7,7 +7,7 @@ Based on the [accessible tabs component by @stowball](https://codepen.io/stowbal
 
 The component is an accordion on smaller screens and switches to a tab view on larger viewports. In tabs mode, use Left and Right to move between tabs; one panel is always open. In accordion mode, Enter or Space toggles a disclosure, and several panels can stay open.
 
-This README describes the upcoming 2.0 release. Upgrading from 1.x? See the [migration checklist](CHANGELOG.md#upgrading-from-1x), especially if you support Internet Explorer or supply your own markup and CSS.
+Upgrading from 1.x to 2.0? See the [migration checklist](CHANGELOG.md#upgrading-from-1x), especially if you support Internet Explorer or supply your own markup and CSS.
 
 ## Demo
 
